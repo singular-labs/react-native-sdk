@@ -150,6 +150,10 @@ RCT_REMAP_METHOD(isAllTrackingStopped, resolver: (RCTPromiseResolveBlock)resolve
     resolve([Singular isAllTrackingStopped] ? @YES : @NO);
 }
 
+RCT_EXPORT_METHOD(setReactSDKVersion:(NSString*)wrapper version:(NSString*)version){
+    [Singular setWrapperName:wrapper andVersion:version];
+}
+
 #pragma mark - Private methods
 
 +(NSDictionary*)jsonToDictionary:(NSString*)json{

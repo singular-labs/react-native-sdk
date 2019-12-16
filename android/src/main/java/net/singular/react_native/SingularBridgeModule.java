@@ -154,6 +154,11 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         promise.resolve(Singular.isAllTrackingStopped());
     }
 
+    @ReactMethod
+    public void setReactSDKVersion(String wrapper, String version){
+        Singular.setWrapperNameAndVersion(wrapper, version);
+    }
+
     private Map<String, Object> convertJsonToMap(String json) {
         Map<String, Object> args = new HashMap<>();
 

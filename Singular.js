@@ -2,6 +2,9 @@ import {NativeEventEmitter, NativeModules} from 'react-native';
 
 const {SingularBridge} = NativeModules;
 
+const SDK_NAME = 'ReactNative';
+const SDK_VERSION = '1.0.0';
+
 export class Singular {
 
     static _singularLinkHandler;
@@ -9,6 +12,7 @@ export class Singular {
 
     static init(apikey, secret, customUserId) {
         SingularBridge.init(apikey, secret, customUserId);
+        SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
     }
 
     static initWithSingularLinks(apikey, secret, customUserId, singularLinksCallback) {
@@ -23,6 +27,7 @@ export class Singular {
             });
 
         SingularBridge.initWithSingularLinks(apikey, secret, customUserId);
+        SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
     }
 
     static setCustomUserId(customUserId) {
