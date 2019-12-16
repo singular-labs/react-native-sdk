@@ -95,7 +95,7 @@ export class Singular {
         SingularBridge.resumeAllTracking();
     }
 
-    async static isAllTrackingStopped() {
-        return await SingularBridge.isAllTrackingStopped();
-    }
+    // static isAllTrackingStopped() = async() => {
+    //     return await SingularBridge.isAllTrackingStopped();
+    // }
 }

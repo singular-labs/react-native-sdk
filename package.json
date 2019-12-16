@@ -1,8 +1,6 @@
 {
-  "name": "singular-react-native",
-  "version": "0.0.1",
-  "main": "index.js",
-  "private": true,
+  "name": "singular-react-native-sdk",
+  "version": "1.0.0-Beta.3",
   "dependencies": {
     "react-native": "0.61.5"
   },
