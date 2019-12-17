@@ -1,6 +1,6 @@
 #import "SingularBridge.h"
 
-#import <Singular.h>
+#import <Singular/Singular.h>
 
 #if __has_include(<React/RCTBridge.h>)
 #import <React/RCTBridge.h>
