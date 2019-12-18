@@ -1,9 +1,20 @@
 {
   "name": "singular-react-native-sdk",
-  "version": "1.0.0-Beta.4",
+  "version": "1.0.0-Beta.6",
   "dependencies": {
     "react-native": "0.61.5"
   },
+  "files": [
+    "android",
+    "branch.example.json",
+    "ios/SingularBridge.h",
+    "ios/SingularBridge.m",
+    "!**/*-dev.podspec",
+    "Singular-React-Native.podspec",
+    "Singular.js",
+    "SingularPurchase.js",
+    "index.js"
+  ],
   "devDependencies": {
     "@babel/core": "7.7.4",
     "@babel/runtime": "7.7.4",
