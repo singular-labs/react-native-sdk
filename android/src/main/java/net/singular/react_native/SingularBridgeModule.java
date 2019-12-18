@@ -149,9 +149,9 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         Singular.resumeAllTracking();
     }
 
-    @ReactMethod
-    public void isAllTrackingStopped(final Promise promise) {
-        promise.resolve(Singular.isAllTrackingStopped());
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public boolean isAllTrackingStopped() {
+        return Singular.isAllTrackingStopped();
     }
 
     @ReactMethod

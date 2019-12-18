@@ -11,4 +11,5 @@ Pod::Spec.new do |spec|
   spec.platform         = :ios, "8.0"
   spec.static_framework = true
   spec.dependency 'Singular'
+  spec.dependency 'React'
 end

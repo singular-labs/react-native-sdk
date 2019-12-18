@@ -1,12 +1,12 @@
 {
   "name": "singular-react-native-sdk",
-  "version": "1.0.0-Beta.6",
+  "version": "1.0.0-Beta.10",
   "dependencies": {
     "react-native": "0.61.5"
   },
   "files": [
-    "android",
-    "branch.example.json",
+    "android/src",
+    "android/build.gradle",
     "ios/SingularBridge.h",
     "ios/SingularBridge.m",
     "!**/*-dev.podspec",
