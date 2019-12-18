@@ -1,6 +1,6 @@
 {
-  "name": "singular-react-native-sdk",
-  "version": "1.0.0-Beta.10",
+  "name": "singular-react-native",
+  "version": "1.0.0",
   "dependencies": {
     "react-native": "0.61.5"
   },

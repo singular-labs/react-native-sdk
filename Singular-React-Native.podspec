@@ -1,6 +1,9 @@
+require 'json'
+package = JSON.parse(File.read("package.json"))
+
 Pod::Spec.new do |spec|
   spec.name             = "Singular-React-Native"
-  spec.version          = "1.0.0"
+  spec.version          = package["version"]
   spec.summary          = "Singular React Native bridge for iOS"
   spec.license          = "MIT"
   spec.homepage         = "https://www.singular.net/"
