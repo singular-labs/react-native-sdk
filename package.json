@@ -12,6 +12,7 @@
     "!**/*-dev.podspec",
     "Singular-React-Native.podspec",
     "Singular.js",
+    "SingularConfig.js",
     "SingularPurchase.js",
     "index.js"
   ],

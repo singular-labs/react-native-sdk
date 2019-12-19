@@ -1,32 +1,31 @@
 import {NativeEventEmitter, NativeModules} from 'react-native';
-
+import {version} from './package.json';
 const {SingularBridge} = NativeModules;
 
 const SDK_NAME = 'ReactNative';
-const SDK_VERSION = '1.0.0';
+const SDK_VERSION = version;
 
 export class Singular {
 
-    static _singularLinkHandler;
     static _singularLinksHandlerEmitter = new NativeEventEmitter(SingularBridge);
 
-    static init(apikey, secret, customUserId) {
-        SingularBridge.init(apikey, secret, customUserId);
-        SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
-    }
+    static init(singularConfig) {
+        if(!singularConfig.singularLinksCallback){
+            SingularBridge.init(singularConfig.apikey, singularConfig.secret, singularConfig.customUserId);
+        } else {
+            this._singularLinkHandler = singularConfig.singularLinksCallback;
 
-    static initWithSingularLinks(apikey, secret, customUserId, singularLinksCallback) {
-        this._singularLinkHandler = singularLinksCallback;
+            this._singularLinksHandlerEmitter.addListener(
+                'SingularLinkHandler',
+                singularLinksParams => {
+                    if (this._singularLinkHandler) {
+                        this._singularLinkHandler(singularLinksParams);
+                    }
+                });
 
-        this._singularLinksHandlerEmitter.addListener(
-            'SingularLinkHandler',
-            singularLinksParams => {
-                if (this._singularLinkHandler) {
-                    this._singularLinkHandler(singularLinksParams);
-                }
-            });
+            SingularBridge.initWithSingularLinks(singularConfig.apikey, singularConfig.secret, singularConfig.customUserId);
+        }
 
-        SingularBridge.initWithSingularLinks(apikey, secret, customUserId);
         SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
     }
 
