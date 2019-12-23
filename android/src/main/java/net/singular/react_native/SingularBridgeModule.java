@@ -42,22 +42,30 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void init(String apiKey, String secret, String customUserId) {
+    public void init(String apiKey, String secret, String customUserId, int sessionTimeout) {
         config = new SingularConfig(apiKey, secret);
 
         if (customUserId != null) {
             config.withCustomUserId(customUserId);
         }
 
+        if (sessionTimeout >= 0) {
+            config.withSessionTimeoutInSec(sessionTimeout);
+        }
+
         Singular.init(reactContext, config);
     }
 
     @ReactMethod
-    public void initWithSingularLinks(String apiKey, String secret, String customUserId) {
+    public void initWithSingularLink(String apiKey, String secret, String customUserId, int sessionTimeout) {
         config = new SingularConfig(apiKey, secret);
 
         if (customUserId != null) {
             config.withCustomUserId(customUserId);
+        }
+
+        if (sessionTimeout >= 0) {
+            config.withSessionTimeoutInSec(sessionTimeout);
         }
 
         singularLinkHandler = new SingularLinkHandler() {
@@ -125,7 +133,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setUninstallToken(String token){
+    public void setUninstallToken(String token) {
         Singular.setFCMDeviceToken(token);
     }
 
@@ -155,7 +163,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setReactSDKVersion(String wrapper, String version){
+    public void setReactSDKVersion(String wrapper, String version) {
         Singular.setWrapperNameAndVersion(wrapper, version);
     }
 
@@ -188,7 +196,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         @Override
         public void onActivityStarted(Activity activity) {
 
-            // We want to trigger the singular links handler only if it's registered
+            // We want to trigger the singular link handler only if it's registered
             if (config != null && singularLinkHandler != null && activity.getIntent().getData() != null) {
                 config.withSingularLink(activity.getIntent(), singularLinkHandler);
 

@@ -30,6 +30,9 @@ android {
 }
 
 repositories {
+    maven {
+        url "../node_modules/react-native/android"
+    }
     mavenCentral()
     jcenter()
     maven { url 'http://maven.singular.net/' }
@@ -39,4 +42,5 @@ repositories {
 dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'com.singular.sdk:singular_sdk:9.+'
+    implementation 'com.android.support:support-annotations:28.0.0'
 }

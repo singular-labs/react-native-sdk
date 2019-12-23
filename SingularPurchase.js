@@ -24,7 +24,7 @@ export class SingularIOSPurchase extends SingularPurchase {
 export class SingularAndroidPurchase extends SingularPurchase {
     constructor(revenue, currency, receipt, signature) {
         super(revenue, currency);
-        this._values.receipt = signature;
+        this._values.receipt = receipt;
         this._values.receipt_signature = signature;
     }
 }

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2102AFBB23A1288800B47EA7 /* SingularBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 2102AFB923A1288800B47EA7 /* SingularBridge.m */; };
+		21971A1223B0B75B00988826 /* SingularBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 21971A1023B0B75B00988826 /* SingularBridge.m */; };
 		3C3E1DA94D486553717D37BD /* Pods_SingularReactNative.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A42FEA904269702D54970739 /* Pods_SingularReactNative.framework */; };
 /* End PBXBuildFile section */
 
@@ -26,8 +26,8 @@
 /* Begin PBXFileReference section */
 		0A73AD74EC46190011799071 /* Pods-RNSingular.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNSingular.release.xcconfig"; path = "Target Support Files/Pods-RNSingular/Pods-RNSingular.release.xcconfig"; sourceTree = "<group>"; };
 		2102AFAD23A1274300B47EA7 /* libSingularReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSingularReactNative.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2102AFB923A1288800B47EA7 /* SingularBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SingularBridge.m; sourceTree = "<group>"; };
-		2102AFBA23A1288800B47EA7 /* SingularBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingularBridge.h; sourceTree = "<group>"; };
+		21971A1023B0B75B00988826 /* SingularBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SingularBridge.m; sourceTree = "<group>"; };
+		21971A1123B0B75B00988826 /* SingularBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingularBridge.h; sourceTree = "<group>"; };
 		457DAA03C7446F420D32EC6D /* Pods-SingularReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SingularReactNative.release.xcconfig"; path = "Target Support Files/Pods-SingularReactNative/Pods-SingularReactNative.release.xcconfig"; sourceTree = "<group>"; };
 		4AB87F2CF077BC7B656AFE88 /* Pods-RNSingular.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNSingular.debug.xcconfig"; path = "Target Support Files/Pods-RNSingular/Pods-RNSingular.debug.xcconfig"; sourceTree = "<group>"; };
 		7001FBFA85049FAE83E4DF1C /* Pods-ReactNativeSingular.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeSingular.debug.xcconfig"; path = "Target Support Files/Pods-ReactNativeSingular/Pods-ReactNativeSingular.debug.xcconfig"; sourceTree = "<group>"; };
@@ -59,7 +59,8 @@
 		2102AFA423A1274300B47EA7 = {
 			isa = PBXGroup;
 			children = (
-				2102AFAF23A1274300B47EA7 /* SingularReactNative */,
+				21971A1123B0B75B00988826 /* SingularBridge.h */,
+				21971A1023B0B75B00988826 /* SingularBridge.m */,
 				2102AFAE23A1274300B47EA7 /* Products */,
 				55E477B4035916B48B67A6E0 /* Pods */,
 				200A3DCCC12FD4B039A44451 /* Frameworks */,
@@ -72,15 +73,6 @@
 				2102AFAD23A1274300B47EA7 /* libSingularReactNative.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		2102AFAF23A1274300B47EA7 /* SingularReactNative */ = {
-			isa = PBXGroup;
-			children = (
-				2102AFBA23A1288800B47EA7 /* SingularBridge.h */,
-				2102AFB923A1288800B47EA7 /* SingularBridge.m */,
-			);
-			path = SingularReactNative;
 			sourceTree = "<group>";
 		};
 		55E477B4035916B48B67A6E0 /* Pods */ = {
@@ -179,7 +171,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2102AFBB23A1288800B47EA7 /* SingularBridge.m in Sources */,
+				21971A1223B0B75B00988826 /* SingularBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

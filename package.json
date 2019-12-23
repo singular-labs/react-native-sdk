@@ -1,15 +1,14 @@
 {
   "name": "singular-react-native",
   "version": "1.0.0",
-  "dependencies": {
-    "react-native": "0.61.5"
+  "peerDependencies": {
+    "react-native": ">=0.60.0"
   },
   "files": [
     "android/src",
     "android/build.gradle",
     "ios/SingularBridge.h",
     "ios/SingularBridge.m",
-    "!**/*-dev.podspec",
     "Singular-React-Native.podspec",
     "Singular.js",
     "SingularConfig.js",

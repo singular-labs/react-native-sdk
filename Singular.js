@@ -1,5 +1,6 @@
 import {NativeEventEmitter, NativeModules} from 'react-native';
 import {version} from './package.json';
+
 const {SingularBridge} = NativeModules;
 
 const SDK_NAME = 'ReactNative';
@@ -7,23 +8,23 @@ const SDK_VERSION = version;
 
 export class Singular {
 
-    static _singularLinksHandlerEmitter = new NativeEventEmitter(SingularBridge);
+    static _singularLinkHandlerEmitter = new NativeEventEmitter(SingularBridge);
 
     static init(singularConfig) {
-        if(!singularConfig.singularLinksCallback){
-            SingularBridge.init(singularConfig.apikey, singularConfig.secret, singularConfig.customUserId);
+        if (!singularConfig.singularLinkHandler) {
+            SingularBridge.init(singularConfig.apikey, singularConfig.secret, singularConfig.customUserId, singularConfig.sessionTimeout);
         } else {
-            this._singularLinkHandler = singularConfig.singularLinksCallback;
+            this._singularLinkHandler = singularConfig.singularLinkHandler;
 
-            this._singularLinksHandlerEmitter.addListener(
+            this._singularLinkHandlerEmitter.addListener(
                 'SingularLinkHandler',
-                singularLinksParams => {
+                singularLinkParams => {
                     if (this._singularLinkHandler) {
-                        this._singularLinkHandler(singularLinksParams);
+                        this._singularLinkHandler(singularLinkParams);
                     }
                 });
 
-            SingularBridge.initWithSingularLinks(singularConfig.apikey, singularConfig.secret, singularConfig.customUserId);
+            SingularBridge.initWithSingularLink(singularConfig.apikey, singularConfig.secret, singularConfig.customUserId, singularConfig.sessionTimeout);
         }
 
         SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
@@ -66,10 +67,14 @@ export class Singular {
         );
     }
 
+    // This method will report revenue to Singular and will perform receipt validation (if enabled) on our backend.
+    // The purchase object should be of SingularIOSPurchase / SingularAndroidPurchase type.
     static inAppPurchase(eventName, purchase) {
         this.eventWithArgs(eventName, purchase.getPurchaseValues());
     }
 
+    // This method will report revenue to Singular and will perform receipt validation (if enabled) on our backend.
+    // The purchase object should be of SingularIOSPurchase / SingularAndroidPurchase type.
     static inAppPurchaseWithArgs(eventName, purchase, args) {
         this.eventWithArgs(eventName, {...purchase.getPurchaseValues(), args});
     }

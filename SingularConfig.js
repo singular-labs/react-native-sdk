@@ -1,13 +1,19 @@
 export class SingularConfig {
     apikey;
     secret;
+    sessionTimeout;
     customUserId;
-    singularLinksCallback;
+    singularLinkHandler;
 
     constructor(apikey, secret) {
         this.apikey = apikey;
         this.secret = secret;
-        this.customUserId = null;
+        this.sessionTimeout = -1; // default -1, uses default timeout (60s)
+    }
+
+    withSessionTimeoutInSec(sessionTimeout){
+        this.sessionTimeout = sessionTimeout;
+        return this;
     }
 
     withCustomUserId(customUserId){
@@ -15,8 +21,8 @@ export class SingularConfig {
         return this;
     }
 
-    withSingularLinks(singularLinksCallback){
-        this.singularLinksCallback = singularLinksCallback;
+    withSingularLink(singularLinkHandler){
+        this.singularLinkHandler = singularLinkHandler;
         return this;
     }
 }
