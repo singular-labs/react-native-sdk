@@ -1,10 +1,10 @@
-export class SingularPurchase {
-    _values;
-
+export default class SingularPurchase {
     constructor(revenue, currency) {
-        this._values.r = revenue;
-        this._values.pcc = currency;
-        this._values.is_revenue_event = true;
+        this._values = {
+            r: revenue,
+            pcc: currency,
+            is_revenue_event: true
+        };
     }
 
     getPurchaseValues() {
@@ -12,19 +12,26 @@ export class SingularPurchase {
     }
 }
 
-export class SingularIOSPurchase extends SingularPurchase {
+export default class SingularIOSPurchase extends SingularPurchase {
     constructor(revenue, currency, productId, transactionId, receipt) {
         super(revenue, currency);
-        this._values.pk = productId;
-        this._values.pti = transactionId;
-        this._values.ptr = receipt;
+        this._values = {
+            ...this._values,
+            pk: productId,
+            pti: transactionId,
+            ptr: receipt,
+        };
     }
 }
 
-export class SingularAndroidPurchase extends SingularPurchase {
+export default class SingularAndroidPurchase extends SingularPurchase {
     constructor(revenue, currency, receipt, signature) {
         super(revenue, currency);
-        this._values.receipt = receipt;
-        this._values.receipt_signature = signature;
+        this._values = {
+            ...this._values,
+            receipt: receipt,
+            receipt_signature: signature,
+            ptr: receipt,
+        };
     }
 }
