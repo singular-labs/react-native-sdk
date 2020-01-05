@@ -1,13 +1,3 @@
-import Singular from "./Singular"
-import SingularConfig from "./SingularConfig";
-import SingularPurchase from "./SingularPurchase"
-import SingularIOSPurchase from "./SingularPurchase";
-import SingularAndroidPurchase from "./SingularPurchase";
-
-export {
-    Singular,
-    SingularConfig,
-    SingularPurchase,
-    SingularIOSPurchase,
-    SingularAndroidPurchase
-}
+export {Singular} from "./Singular"
+export {SingularConfig} from "./SingularConfig";
+export {SingularPurchase, SingularIOSPurchase, SingularAndroidPurchase} from "./SingularPurchase"

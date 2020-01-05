@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		21971A1223B0B75B00988826 /* SingularBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 21971A1023B0B75B00988826 /* SingularBridge.m */; };
-		3C3E1DA94D486553717D37BD /* Pods_SingularReactNative.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A42FEA904269702D54970739 /* Pods_SingularReactNative.framework */; };
+		21D4730A23B90326002CF14C /* Singular.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21D4730923B90326002CF14C /* Singular.framework */; };
+		EDCA31267B99224028EEB318 /* Pods_SingularReactNative.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3593B5155348DBE5DBB99CA5 /* Pods_SingularReactNative.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,11 +29,15 @@
 		2102AFAD23A1274300B47EA7 /* libSingularReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSingularReactNative.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		21971A1023B0B75B00988826 /* SingularBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SingularBridge.m; sourceTree = "<group>"; };
 		21971A1123B0B75B00988826 /* SingularBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingularBridge.h; sourceTree = "<group>"; };
+		219C843623BCC9F9000E1DFA /* Singular.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Singular.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		21D4730923B90326002CF14C /* Singular.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Singular.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3593B5155348DBE5DBB99CA5 /* Pods_SingularReactNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SingularReactNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		457DAA03C7446F420D32EC6D /* Pods-SingularReactNative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SingularReactNative.release.xcconfig"; path = "Target Support Files/Pods-SingularReactNative/Pods-SingularReactNative.release.xcconfig"; sourceTree = "<group>"; };
 		4AB87F2CF077BC7B656AFE88 /* Pods-RNSingular.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RNSingular.debug.xcconfig"; path = "Target Support Files/Pods-RNSingular/Pods-RNSingular.debug.xcconfig"; sourceTree = "<group>"; };
+		6B0DADAA317089BFAD95EC8D /* Pods-SingularReactNativeFramework.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SingularReactNativeFramework.debug.xcconfig"; path = "Target Support Files/Pods-SingularReactNativeFramework/Pods-SingularReactNativeFramework.debug.xcconfig"; sourceTree = "<group>"; };
 		7001FBFA85049FAE83E4DF1C /* Pods-ReactNativeSingular.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeSingular.debug.xcconfig"; path = "Target Support Files/Pods-ReactNativeSingular/Pods-ReactNativeSingular.debug.xcconfig"; sourceTree = "<group>"; };
 		78C1A73A8AC7EDC13CE6886D /* Pods-SingularReactNative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SingularReactNative.debug.xcconfig"; path = "Target Support Files/Pods-SingularReactNative/Pods-SingularReactNative.debug.xcconfig"; sourceTree = "<group>"; };
-		A42FEA904269702D54970739 /* Pods_SingularReactNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SingularReactNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		813CD31C4B0EABF1C099D335 /* Pods-SingularReactNativeFramework.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SingularReactNativeFramework.release.xcconfig"; path = "Target Support Files/Pods-SingularReactNativeFramework/Pods-SingularReactNativeFramework.release.xcconfig"; sourceTree = "<group>"; };
 		D6BD979CDDCD2B1D518FD386 /* Pods-ReactNativeSingular.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeSingular.release.xcconfig"; path = "Target Support Files/Pods-ReactNativeSingular/Pods-ReactNativeSingular.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -41,7 +46,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C3E1DA94D486553717D37BD /* Pods_SingularReactNative.framework in Frameworks */,
+				21D4730A23B90326002CF14C /* Singular.framework in Frameworks */,
+				EDCA31267B99224028EEB318 /* Pods_SingularReactNative.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,7 +57,9 @@
 		200A3DCCC12FD4B039A44451 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A42FEA904269702D54970739 /* Pods_SingularReactNative.framework */,
+				219C843623BCC9F9000E1DFA /* Singular.framework */,
+				21D4730923B90326002CF14C /* Singular.framework */,
+				3593B5155348DBE5DBB99CA5 /* Pods_SingularReactNative.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -84,6 +92,8 @@
 				D6BD979CDDCD2B1D518FD386 /* Pods-ReactNativeSingular.release.xcconfig */,
 				78C1A73A8AC7EDC13CE6886D /* Pods-SingularReactNative.debug.xcconfig */,
 				457DAA03C7446F420D32EC6D /* Pods-SingularReactNative.release.xcconfig */,
+				6B0DADAA317089BFAD95EC8D /* Pods-SingularReactNativeFramework.debug.xcconfig */,
+				813CD31C4B0EABF1C099D335 /* Pods-SingularReactNativeFramework.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -294,7 +304,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = DZG6XY7PWJ;
-				OTHER_LDFLAGS = "-ObjC";
+				MACH_O_TYPE = staticlib;
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -307,7 +318,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = DZG6XY7PWJ;
-				OTHER_LDFLAGS = "-ObjC";
+				MACH_O_TYPE = staticlib;
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";

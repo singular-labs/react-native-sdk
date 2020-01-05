@@ -1,4 +1,4 @@
-export default class SingularConfig {
+export class SingularConfig {
     apikey;
     secret;
     sessionTimeout;

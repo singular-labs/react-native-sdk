@@ -6,7 +6,7 @@ const {SingularBridge} = NativeModules;
 const SDK_NAME = 'ReactNative';
 const SDK_VERSION = version;
 
-export default class Singular {
+export class Singular {
 
     static _singularLinkHandlerEmitter = new NativeEventEmitter(SingularBridge);
 

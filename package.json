@@ -2,7 +2,7 @@
   "name": "singular-react-native",
   "version": "1.0.0",
   "peerDependencies": {
-    "react-native": ">=0.60.0"
+    "react-native": ">=0.46.4"
   },
   "files": [
     "android/src",
