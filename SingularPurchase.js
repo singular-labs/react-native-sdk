@@ -1,4 +1,4 @@
-export default class SingularPurchase {
+export class SingularPurchase {
     constructor(revenue, currency) {
         this._values = {
             r: revenue,
@@ -12,7 +12,7 @@ export default class SingularPurchase {
     }
 }
 
-export default class SingularIOSPurchase extends SingularPurchase {
+export class SingularIOSPurchase extends SingularPurchase {
     constructor(revenue, currency, productId, transactionId, receipt) {
         super(revenue, currency);
         this._values = {
@@ -24,7 +24,7 @@ export default class SingularIOSPurchase extends SingularPurchase {
     }
 }
 
-export default class SingularAndroidPurchase extends SingularPurchase {
+export class SingularAndroidPurchase extends SingularPurchase {
     constructor(revenue, currency, receipt, signature) {
         super(revenue, currency);
         this._values = {

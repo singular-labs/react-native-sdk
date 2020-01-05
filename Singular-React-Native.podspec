@@ -9,10 +9,9 @@ Pod::Spec.new do |spec|
   spec.homepage         = "https://www.singular.net/"
   spec.author           = "Singular Labs"
   spec.source           = { :git => "https://github.com/singular-labs/react-native-sdk.git", :tag => spec.version.to_s }
-
   spec.source_files      = "ios/*.{h,m}"
   spec.platform         = :ios, "8.0"
   spec.static_framework = true
-  spec.dependency 'Singular'
+  spec.dependency 'Singular-SDK'
   spec.dependency 'React'
 end
