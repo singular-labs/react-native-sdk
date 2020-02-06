@@ -56,7 +56,7 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(init:(NSString*)apikey
                   secret:(NSString*)secret
                   customUserId:(NSString*)customUserId
-                  sessionTimeout:(NSNumber*)sessionTimeout){
+                  sessionTimeout:(nonnull NSNumber*)sessionTimeout){
     if(customUserId){
         [Singular setCustomUserId:customUserId];
     }
@@ -71,7 +71,7 @@ RCT_EXPORT_METHOD(init:(NSString*)apikey
 RCT_EXPORT_METHOD(initWithSingularLink:(NSString*)apikey
                   secret:(NSString*)secret
                   customUserId:(NSString*)customUserId
-                  sessionTimeout:(NSNumber*)sessionTimeout){
+                  sessionTimeout:(nonnull NSNumber*)sessionTimeout){
     if(customUserId){
         [Singular setCustomUserId:customUserId];
     }
