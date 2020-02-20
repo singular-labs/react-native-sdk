@@ -84,10 +84,12 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             }
         };
 
-        // We register to the lifecycle events to auto detect new intent
-        getCurrentActivity().getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
+        if (reactContext.hasCurrentActivity() && getCurrentActivity().getApplication() != null) {
+            // We register to the lifecycle events to auto detect new intent
+            getCurrentActivity().getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
 
-        config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
+            config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
+        }
 
         Singular.init(reactContext, config);
     }
