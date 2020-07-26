@@ -147,6 +147,14 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(isAllTrackingStopped){
     return [Singular isAllTrackingStopped] ? @YES : @NO;
 }
 
+RCT_EXPORT_METHOD(limitDataSharing:(BOOL)limitDataSharingValue){
+    [Singular limitDataSharing:limitDataSharingValue];
+}
+
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getLimitDataSharing){
+    return [Singular getLimitDataSharing] ? @YES : @NO;
+}
+
 RCT_EXPORT_METHOD(setReactSDKVersion:(NSString*)wrapper version:(NSString*)version){
     [Singular setWrapperName:wrapper andVersion:version];
 }
