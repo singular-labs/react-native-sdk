@@ -165,6 +165,16 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void limitDataSharing(boolean limitDataSharingValue) {
+        Singular.limitDataSharing(limitDataSharingValue);
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public boolean getLimitDataSharing() {
+        return Singular.getLimitDataSharing();
+    }
+
+    @ReactMethod
     public void setReactSDKVersion(String wrapper, String version) {
         Singular.setWrapperNameAndVersion(wrapper, version);
     }

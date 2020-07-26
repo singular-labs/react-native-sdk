@@ -102,4 +102,12 @@ export class Singular {
     static isAllTrackingStopped() {
         return SingularBridge.isAllTrackingStopped();
     }
+
+    static limitDataSharing(limitDataSharingValue) {
+        SingularBridge.limitDataSharing(limitDataSharingValue);
+    }
+
+    static getLimitDataSharing() {
+        return SingularBridge.getLimitDataSharing();
+    }
 }
