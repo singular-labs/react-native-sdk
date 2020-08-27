@@ -42,32 +42,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void init(String apiKey, String secret, String customUserId, int sessionTimeout) {
-        config = new SingularConfig(apiKey, secret);
-
-        if (customUserId != null) {
-            config.withCustomUserId(customUserId);
-        }
-
-        if (sessionTimeout >= 0) {
-            config.withSessionTimeoutInSec(sessionTimeout);
-        }
-
-        Singular.init(reactContext, config);
-    }
-
-    @ReactMethod
-    public void initWithSingularLink(String apiKey, String secret, String customUserId, int sessionTimeout) {
-        config = new SingularConfig(apiKey, secret);
-
-        if (customUserId != null) {
-            config.withCustomUserId(customUserId);
-        }
-
-        if (sessionTimeout >= 0) {
-            config.withSessionTimeoutInSec(sessionTimeout);
-        }
-
+    public void init(SingularConfig config) {
         singularLinkHandler = new SingularLinkHandler() {
             @Override
             public void onResolved(SingularLinkParams singularLinkParams) {
