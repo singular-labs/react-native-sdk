@@ -8,15 +8,15 @@ const SDK_VERSION = version;
 
 export class Singular {
 
-    static _singularLinkHandlerEmitter = new NativeEventEmitter(SingularBridge);
-
+    static _singularNativeEmitter = new NativeEventEmitter(SingularBridge);
+    
     static init(singularConfig) {
-        if (!singularConfig.singularLinkHandler) {
-            SingularBridge.init(singularConfig.apikey, singularConfig.secret, singularConfig.customUserId, singularConfig.sessionTimeout);
-        } else {
-            this._singularLinkHandler = singularConfig.singularLinkHandler;
+        this._singularLinkHandler = singularConfig.singularLinkHandler;
+        this._conversionValueHandler = singularConfig.conversionValueHandler;
 
-            this._singularLinkHandlerEmitter.addListener(
+        SingularBridge.init(JSON.stringify(singularConfig))
+
+        this._singularNativeEmitter.addListener(
                 'SingularLinkHandler',
                 singularLinkParams => {
                     if (this._singularLinkHandler) {
@@ -24,8 +24,13 @@ export class Singular {
                     }
                 });
 
-            SingularBridge.initWithSingularLink(singularConfig.apikey, singularConfig.secret, singularConfig.customUserId, singularConfig.sessionTimeout);
-        }
+        this._singularNativeEmitter.addListener(
+                'ConversionValueHandler',
+                conversionValue => {
+                    if (this._conversionValueHandler) {
+                        this._conversionValueHandler(conversionValueHandler);
+                    }
+                });
 
         SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
     }

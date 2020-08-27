@@ -23,9 +23,7 @@
 static NSString* apikey;
 static NSString* secret;
 static NSDictionary* launchOptions;
-static BOOL isSingularLinkEnabled = NO;
 static RCTEventEmitter* eventEmitter;
-static RCTEventEmitter* conversionValueEmitter;
 
 
 // Saving the launchOptions for later when the SDK is initialized to handle Singular Links.
@@ -37,10 +35,6 @@ static RCTEventEmitter* conversionValueEmitter;
 // Handling Singular Link when the app is opened from a Singular Link while it was in the background.
 // The client will need to call this method in the AppDelegate in continueUserActivity.
 +(void)startSessionWithUserActivity:(NSUserActivity*)userActivity{
-    if(!isSingularLinkEnabled){
-        return;
-    }
-    
     [Singular startSession:apikey
                    withKey:secret
            andUserActivity:userActivity
@@ -60,7 +54,6 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     NSDictionary* singularConfigDict = [SingularBridge jsonToDictionary:jsonSingularConfig];
     
-        
     NSString* apiKey = [singularConfigDict objectForKey:@"apiKey"];
     NSString* apiSecret = [singularConfigDict objectForKey:@"secret"];
     
@@ -68,15 +61,12 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     SingularConfig* singularConfig = [[SingularConfig alloc] initWithApiKey:apiKey andSecret:apiSecret];
     
     // Singular Links fields
-    singularConfig.launchOptions = [singularConfigDict objectForKey:@"launchOptions"];
+    singularConfig.launchOptions = launchOptions;
     singularConfig.supportedDomains = [singularConfigDict objectForKey:@"supportedDomains"];
-    singularConfig.userActivity = [singularConfigDict objectForKey:@"userActivity"];
-    singularConfig.openUrl = [singularConfigDict objectForKey:@"openUrl"];
     singularConfig.shortLinkResolveTimeOut = [[singularConfigDict objectForKey:@"shortlinkResolveTimeout"] integerValue];
-    singularConfig.supportedDomains = [singularConfigDict objectForKey:@"supportedDomains"];
-    
-    
-    @property void(^singularLinksHandler)(SingularLinkParams*);
+    singularConfig.singularLinksHandler = ^(SingularLinkParams * params){
+        [SingularBridge handleSingularLink:params];
+    };
     
     // Global Properties fields
     NSDictionary* globalProperties = [singularConfigDict objectForKey:@"globalProperties"];
@@ -92,67 +82,18 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     singularConfig.skAdNetworkEnabled = [[singularConfigDict objectForKey:@"skAdNetworkEnabled"] boolValue];
     singularConfig.manualSkanConversionManagement = [[singularConfigDict objectForKey:@"manualSkanConversionManagement"] boolValue];
     singularConfig.conversionValueUpdatedCallback = ^(NSInteger conversionValue) {
-        handleConversionValueUpdated(conversionValue);
+        [SingularBridge handleConversionValue: conversionValue];
     };
     
     
     singularConfig.waitForTrackingAuthorizationWithTimeoutInterval =
-    [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
+        [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
     
-    
-    
-    
-    
-    [Singular start:singularConfig];
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanUpdateConversionValue:(NSInteger)conversionValue){
-    return [Singular skanUpdateConversionValue: conversionValue] ? @YES : @NO;
-}
-
-
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanGetConversionValue){
-    return [Singular skanGetConversionValue];
-}
-
-RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
-    return [Singular skanRegisterAppForAdNetworkAttribution];
-}
-RCT_EXPORT_METHOD(init:(NSString*)apikey
-                  secret:(NSString*)secret
-                  customUserId:(NSString*)customUserId
-                  sessionTimeout:(nonnull NSNumber*)sessionTimeout){
-    if(customUserId){
-        [Singular setCustomUserId:customUserId];
-    }
-    
-    if([sessionTimeout intValue] >= 0){
-        [Singular setSessionTimeout:[sessionTimeout intValue]];
-    }
-    
-    [Singular startSession:apikey withKey:secret];
-}
-
-RCT_EXPORT_METHOD(initWithSingularLink:(NSString*)apikey
-                  secret:(NSString*)secret
-                  customUserId:(NSString*)customUserId
-                  sessionTimeout:(nonnull NSNumber*)sessionTimeout){
-    if(customUserId){
-        [Singular setCustomUserId:customUserId];
-    }
-    
-    if([sessionTimeout intValue] >= 0){
-        [Singular setSessionTimeout:[sessionTimeout intValue]];
-    }
-    
-    isSingularLinkEnabled = YES;
     eventEmitter = self;
     
-    [Singular startSession:apikey
-                   withKey:secret
-          andLaunchOptions:launchOptions
-   withSingularLinkHandler:^(SingularLinkParams * params){
-        [SingularBridge handleSingularLink:params];
-    }];
+    [Singular start:singularConfig];
 }
+
 
 RCT_EXPORT_METHOD(setCustomUserId:(NSString*)customUserId){
     [Singular setCustomUserId:customUserId];
@@ -222,6 +163,19 @@ RCT_EXPORT_METHOD(setReactSDKVersion:(NSString*)wrapper version:(NSString*)versi
     [Singular setWrapperName:wrapper andVersion:version];
 }
 
+// export skan nmeods
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanUpdateConversionValue:(NSInteger)conversionValue){
+    return [Singular skanUpdateConversionValue: conversionValue] ? @YES : @NO;
+}
+
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanGetConversionValue){
+    return [Singular skanGetConversionValue];
+}
+
+RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
+    [Singular skanRegisterAppForAdNetworkAttribution];
+}
+
 #pragma mark - Private methods
 
 +(NSDictionary*)jsonToDictionary:(NSString*)json{
@@ -250,6 +204,11 @@ RCT_EXPORT_METHOD(setReactSDKVersion:(NSString*)wrapper version:(NSString*)versi
         @"passthrough": [params getPassthrough],
         @"isDeferred": [params isDeferred] ? @YES : @NO
     }];
+}
+
++(void)handleConversionValue:(NSInteger)conversionValue{
+    // Raising the Conversion Value handler in the react-native code
+    [eventEmitter sendEventWithName:@"ConversionValueHandler" body:@(conversionValue)];
 }
 
 @end
