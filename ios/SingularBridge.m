@@ -1,6 +1,7 @@
 #import "SingularBridge.h"
 
 #import <Singular/Singular.h>
+#import <Singular/SingularConfig.h>
 
 #if __has_include(<React/RCTBridge.h>)
 #import <React/RCTBridge.h>
@@ -53,6 +54,54 @@ RCT_EXPORT_MODULE();
     return @[@"SingularLinkHandler"];
 }
 
+// init function using config json
+RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
+    NSDictionary* singularConfigDict = [SingularBridge jsonToDictionary:jsonSingularConfig];
+    
+        
+    NSString* apiKey = [singularConfigDict objectForKey:@"apiKey"];
+    NSString* apiSecret = [singularConfigDict objectForKey:@"secret"];
+    
+    // General Fields
+    SingularConfig* singularConfig = [[SingularConfig alloc] initWithApiKey:apiKey andSecret:apiSecret];
+    
+    // Singular Links fields
+    singularConfig.launchOptions = [singularConfigDict objectForKey:@"launchOptions"];
+    singularConfig.supportedDomains = [singularConfigDict objectForKey:@"supportedDomains"];
+    singularConfig.userActivity = [singularConfigDict objectForKey:@"userActivity"];
+    singularConfig.openUrl = [singularConfigDict objectForKey:@"openUrl"];
+    singularConfig.shortLinkResolveTimeOut = [[singularConfigDict objectForKey:@"shortlinkResolveTimeout"] integerValue];
+    singularConfig.supportedDomains = [singularConfigDict objectForKey:@"supportedDomains"];
+    
+    
+    @property void(^singularLinksHandler)(SingularLinkParams*);
+    
+    // Global Properties fields
+    NSDictionary* globalProperties = [singularConfigDict objectForKey:@"globalProperties"];
+    if ([globalProperties count] > 0){
+         for (NSDictionary* property in [globalProperties allValues]) {
+             [singularConfig setGlobalProperty:[property objectForKey:@"Key"]
+                                     withValue:[property objectForKey:@"Value"]
+                              overrideExisting:[[property objectForKey:@"OverrideExisting"] boolValue]];
+        }
+    }
+    
+    // skan
+    singularConfig.skAdNetworkEnabled = [[singularConfigDict objectForKey:@"skAdNetworkEnabled"] boolValue];
+    singularConfig.manualSkanConversionManagement = [[singularConfigDict objectForKey:@"manualSkanConversionManagement"] boolValue];
+    singularConfig.conversionValueUpdatedCallback = ^(NSInteger conversionValue) {
+        handleConversionValueUpdated(conversionValue);
+    };
+    
+    
+    singularConfig.waitForTrackingAuthorizationWithTimeoutInterval =
+    [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
+    
+    
+    
+    
+    
+    [Singular start:singularConfig];
 RCT_EXPORT_METHOD(init:(NSString*)apikey
                   secret:(NSString*)secret
                   customUserId:(NSString*)customUserId

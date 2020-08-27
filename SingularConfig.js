@@ -5,6 +5,9 @@ export class SingularConfig {
     customUserId;
     singularLinkHandler;
 
+    skAdNetworkEnabled;
+    manualSkanConversionManagement;
+
     constructor(apikey, secret) {
         this.apikey = apikey;
         this.secret = secret;
@@ -24,5 +27,15 @@ export class SingularConfig {
     withSingularLink(singularLinkHandler){
         this.singularLinkHandler = singularLinkHandler;
         return this;
+    }
+
+    withSkAdNetworkEnabled(skAdNetworkEnabled) {
+        this.skAdNetworkEnabled = skAdNetworkEnabled;
+        return this;   
+    }
+
+    withManualSkanConversionManagement(manualSkanConversionManagement) {
+        this.manualSkanConversionManagement = manualSkanConversionManagement;
+        return this;   
     }
 }
