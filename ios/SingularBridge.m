@@ -25,6 +25,8 @@ static NSString* secret;
 static NSDictionary* launchOptions;
 static BOOL isSingularLinkEnabled = NO;
 static RCTEventEmitter* eventEmitter;
+static RCTEventEmitter* conversionValueEmitter;
+
 
 // Saving the launchOptions for later when the SDK is initialized to handle Singular Links.
 // The client will need to call this method is the AppDelegate in didFinishLaunchingWithOptions.
@@ -102,6 +104,18 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     
     
     [Singular start:singularConfig];
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanUpdateConversionValue:(NSInteger)conversionValue){
+    return [Singular skanUpdateConversionValue: conversionValue] ? @YES : @NO;
+}
+
+
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanGetConversionValue){
+    return [Singular skanGetConversionValue];
+}
+
+RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
+    return [Singular skanRegisterAppForAdNetworkAttribution];
+}
 RCT_EXPORT_METHOD(init:(NSString*)apikey
                   secret:(NSString*)secret
                   customUserId:(NSString*)customUserId
