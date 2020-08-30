@@ -84,8 +84,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     singularConfig.conversionValueUpdatedCallback = ^(NSInteger conversionValue) {
         [SingularBridge handleConversionValue: conversionValue];
     };
-    
-    
+        
     singularConfig.waitForTrackingAuthorizationWithTimeoutInterval =
         [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
     
@@ -93,7 +92,6 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     
     [Singular start:singularConfig];
 }
-
 
 RCT_EXPORT_METHOD(setCustomUserId:(NSString*)customUserId){
     [Singular setCustomUserId:customUserId];
@@ -165,7 +163,7 @@ RCT_EXPORT_METHOD(setReactSDKVersion:(NSString*)wrapper version:(NSString*)versi
 
 // export skan nmeods
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanUpdateConversionValue:(NSInteger)conversionValue){
-    return [Singular skanUpdateConversionValue: conversionValue] ? @YES : @NO;
+    return [Singular skanUpdateConversionValue:conversionValue] ? @YES : @NO;
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanGetConversionValue){
