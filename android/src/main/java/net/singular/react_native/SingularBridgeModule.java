@@ -1,6 +1,5 @@
 package net.singular.react_native;
 
-import com.facebook.react.bridge.Promise;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
@@ -19,11 +18,14 @@ import com.singular.sdk.SingularConfig;
 import com.singular.sdk.SingularLinkHandler;
 import com.singular.sdk.SingularLinkParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class SingularBridgeModule extends ReactContextBaseJavaModule {
@@ -44,122 +46,114 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
     }
 
     private SingularConfig parseSingularConfig(String configString) {
-        JSONObject configJson = new JSONObject(configString);
-        String apikey = configJson.optString("apiKey", null);
-        String secret = configJson.optString("secret", null);
+        try {
+            JSONObject configJson = new JSONObject(configString);
 
-        SingularConfig singularConfig = new SingularConfig(apikey, secret);
+            String apikey = configJson.optString("apiKey", null);
+            String secret = configJson.optString("secret", null);
 
-        String facebookAppId = configJson.optString("facebookAppId", null);
-        String openUri = configJson.optString("openUri", null);
+            SingularConfig singularConfig = new SingularConfig(apikey, secret);
 
-        if (!TextUtils.isEmpty(facebookAppId)) {
-            singularConfig.withFacebookAppId(facebookAppId);
-        }
+            String facebookAppId = configJson.optString("facebookAppId", null);
+            String openUri = configJson.optString("openUri", null);
 
-        if (!TextUtils.isEmpty(openUri)) {
-            Uri uri = Uri.parse(openUri);
-            singularConfig.withOpenURI(uri);
-        }
+            if (!TextUtils.isEmpty(facebookAppId)) {
+                singularConfig.withFacebookAppId(facebookAppId);
+            }
 
-        boolean ddlEnable = configJson.optBoolean("enableDeferredDeepLinks", false);
-
-        if (ddlEnable) {
-            singularConfig.withDDLHandler(new DeferredDeepLinkHandler() {
-                @Override
-                public void handleLink(final String link) {
-                        reactContext.
-                                getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                                .emit("SingularLinkHandler", link == null ?  "" link:);
-                    }
-                }
-            });
+            if (!TextUtils.isEmpty(openUri)) {
+                Uri uri = Uri.parse(openUri);
+                singularConfig.withOpenURI(uri);
+            }
 
             long ddlTimeoutSec = configJson.optLong("ddlTimeoutSec", 0);
 
             if (ddlTimeoutSec > 0) {
                 singularConfig.withDDLTimeoutInSec(ddlTimeoutSec);
             }
-        }
 
-        List<String> domains = new ArrayList<>();
+            List<String> domains = new ArrayList<>();
+            JSONArray supportedDomains = configJson.optJSONArray("supportedDomains");
 
-        JSONArray supportedDomains = configJson.optJSONArray("supportedDomains");
-
-        if (supportedDomains != null) {
-            for (int i = 0; i < supportedDomains.length(); i++) {
-                domains.add(supportedDomains.getString(i));
+            if (supportedDomains != null) {
+                for (int i = 0; i < supportedDomains.length(); i++) {
+                    domains.add(supportedDomains.getString(i));
+                }
             }
-        }
 
-        singularLinkHandler = new SingularLinkHandler() {
-            @Override
-            public void onResolved(SingularLinkParams singularLinkParams) {
+            singularLinkHandler = new SingularLinkHandler() {
+                @Override
+                public void onResolved(SingularLinkParams singularLinkParams) {
 
-                WritableMap params = Arguments.createMap();
-                params.putString("deeplink", singularLinkParams.getDeeplink());
-                params.putString("passthrough", singularLinkParams.getPassthrough());
-                params.putBoolean("isDeferred", singularLinkParams.isDeferred());
+                    WritableMap params = Arguments.createMap();
+                    params.putString("deeplink", singularLinkParams.getDeeplink());
+                    params.putString("passthrough", singularLinkParams.getPassthrough());
+                    params.putBoolean("isDeferred", singularLinkParams.isDeferred());
 
-                // Raising the Singular Link handler in the react-native code
-                reactContext.
-                        getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                        .emit("SingularLinkHandler", params);
+                    // Raising the Singular Link handler in the react-native code
+                    reactContext.
+                            getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("SingularLinkHandler", params);
+                }
+            };
+
+            if (reactContext.hasCurrentActivity() && getCurrentActivity().getApplication() != null) {
+                // We register to the lifecycle events to auto detect new intent
+                getCurrentActivity().getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
+
+                config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
             }
-        };
 
-        if (reactContext.hasCurrentActivity() && getCurrentActivity().getApplication() != null) {
-            // We register to the lifecycle events to auto detect new intent
-            getCurrentActivity().getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
+            boolean enableLogging = configJson.optBoolean("enableLogging", false);
 
-            config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
-        }
-
-        boolean enableLogging = configJson.optBoolean("enableLogging", false);
-
-        if (enableLogging) {
-            singularConfig.withLoggingEnabled();
-        }
-
-        long sessionTimeoutSec = configJson.optLong("shortlinkResolveTimeout", 0);
-
-        if (sessionTimeoutSec > 0) {
-            singularConfig.withSessionTimeoutInSec(sessionTimeoutSec);
-        }
-
-        String customUserId = configJson.optString("customUserId", null);
-
-        if (customUserId != null) {
-            singularConfig.withCustomUserId(customUserId);
-        }
-
-        String imei = configJson.optString("imei", null);
-
-        if (imei != null) {
-            singularConfig.withIMEI(imei);
-        }
-
-        JSONObject globalProperties = configJson.optJSONObject("globalProperties");
-
-        // Adding all of the global properties to the singular config
-        if (globalProperties != null) {
-            Iterator<String> iter = globalProperties.keys();
-            while (iter.hasNext()) {
-                String key = iter.next();
-                JSONObject property = globalProperties.getJSONObject(key);
-
-                singularConfig.withGlobalProperty(property.getString("Key"),
-                        property.getString("Value"),
-                        property.getBoolean("OverrideExisting"));
+            if (enableLogging) {
+                singularConfig.withLoggingEnabled();
             }
+
+            long sessionTimeoutSec = configJson.optLong("shortlinkResolveTimeout", 0);
+
+            if (sessionTimeoutSec > 0) {
+                singularConfig.withSessionTimeoutInSec(sessionTimeoutSec);
+            }
+
+            String customUserId = configJson.optString("customUserId", null);
+
+            if (customUserId != null) {
+                singularConfig.withCustomUserId(customUserId);
+            }
+
+            String imei = configJson.optString("imei", null);
+
+            if (imei != null) {
+                singularConfig.withIMEI(imei);
+            }
+
+            JSONObject globalProperties = configJson.optJSONObject("globalProperties");
+
+            // Adding all of the global properties to the singular config
+            if (globalProperties != null) {
+                Iterator<String> iter = globalProperties.keys();
+                while (iter.hasNext()) {
+                    String key = iter.next();
+                    JSONObject property = globalProperties.getJSONObject(key);
+
+                    singularConfig.withGlobalProperty(property.getString("Key"),
+                            property.getString("Value"),
+                            property.getBoolean("OverrideExisting"));
+                }
+            }
+
+            return singularConfig;
+
+        } catch (JSONException ignored) {
         }
 
-        return singularConfig
+        return null;
     }
 
     @ReactMethod
     public void init(String configJsonString) {
-        SingularConfig config = parseSingularConfig(configJsonString)
+        SingularConfig config = parseSingularConfig(configJsonString);
         Singular.init(reactContext, config);
     }
 

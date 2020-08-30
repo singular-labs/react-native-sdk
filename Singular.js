@@ -9,7 +9,7 @@ const SDK_VERSION = version;
 export class Singular {
 
     static _singularNativeEmitter = new NativeEventEmitter(SingularBridge);
-    
+
     static init(singularConfig) {
         this._singularLinkHandler = singularConfig.singularLinkHandler;
         this._conversionValueHandler = singularConfig.conversionValueHandler;
@@ -28,7 +28,7 @@ export class Singular {
                 'ConversionValueHandler',
                 conversionValue => {
                     if (this._conversionValueHandler) {
-                        this._conversionValueHandler(conversionValueHandler);
+                        this._conversionValueHandler(conversionValue);
                     }
                 });
 
