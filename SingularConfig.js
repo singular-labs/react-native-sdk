@@ -15,6 +15,7 @@ export class SingularConfig {
         this.secret = secret;
         this.sessionTimeout = -1; // default -1, uses default timeout (60s)
         this.skAdNetworkEnabled = False
+        this.manualSkanConversionManagement = False
     }
 
     withSessionTimeoutInSec(sessionTimeout){
