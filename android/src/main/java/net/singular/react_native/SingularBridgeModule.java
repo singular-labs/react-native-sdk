@@ -8,6 +8,8 @@ import com.facebook.react.bridge.Arguments;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.net.Uri;
+import android.text.TextUtils;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -41,8 +43,55 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         return REACT_CLASS;
     }
 
-    @ReactMethod
-    public void init(SingularConfig config) {
+    private SingularConfig parseSingularConfig(String configString) {
+        JSONObject configJson = new JSONObject(configString);
+        String apikey = configJson.optString("apiKey", null);
+        String secret = configJson.optString("secret", null);
+
+        SingularConfig singularConfig = new SingularConfig(apikey, secret);
+
+        String facebookAppId = configJson.optString("facebookAppId", null);
+        String openUri = configJson.optString("openUri", null);
+
+        if (!TextUtils.isEmpty(facebookAppId)) {
+            singularConfig.withFacebookAppId(facebookAppId);
+        }
+
+        if (!TextUtils.isEmpty(openUri)) {
+            Uri uri = Uri.parse(openUri);
+            singularConfig.withOpenURI(uri);
+        }
+
+        boolean ddlEnable = configJson.optBoolean("enableDeferredDeepLinks", false);
+
+        if (ddlEnable) {
+            singularConfig.withDDLHandler(new DeferredDeepLinkHandler() {
+                @Override
+                public void handleLink(final String link) {
+                        reactContext.
+                                getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                                .emit("SingularLinkHandler", link == null ?  "" link:);
+                    }
+                }
+            });
+
+            long ddlTimeoutSec = configJson.optLong("ddlTimeoutSec", 0);
+
+            if (ddlTimeoutSec > 0) {
+                singularConfig.withDDLTimeoutInSec(ddlTimeoutSec);
+            }
+        }
+
+        List<String> domains = new ArrayList<>();
+
+        JSONArray supportedDomains = configJson.optJSONArray("supportedDomains");
+
+        if (supportedDomains != null) {
+            for (int i = 0; i < supportedDomains.length(); i++) {
+                domains.add(supportedDomains.getString(i));
+            }
+        }
+
         singularLinkHandler = new SingularLinkHandler() {
             @Override
             public void onResolved(SingularLinkParams singularLinkParams) {
@@ -66,6 +115,51 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
         }
 
+        boolean enableLogging = configJson.optBoolean("enableLogging", false);
+
+        if (enableLogging) {
+            singularConfig.withLoggingEnabled();
+        }
+
+        long sessionTimeoutSec = configJson.optLong("shortlinkResolveTimeout", 0);
+
+        if (sessionTimeoutSec > 0) {
+            singularConfig.withSessionTimeoutInSec(sessionTimeoutSec);
+        }
+
+        String customUserId = configJson.optString("customUserId", null);
+
+        if (customUserId != null) {
+            singularConfig.withCustomUserId(customUserId);
+        }
+
+        String imei = configJson.optString("imei", null);
+
+        if (imei != null) {
+            singularConfig.withIMEI(imei);
+        }
+
+        JSONObject globalProperties = configJson.optJSONObject("globalProperties");
+
+        // Adding all of the global properties to the singular config
+        if (globalProperties != null) {
+            Iterator<String> iter = globalProperties.keys();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                JSONObject property = globalProperties.getJSONObject(key);
+
+                singularConfig.withGlobalProperty(property.getString("Key"),
+                        property.getString("Value"),
+                        property.getBoolean("OverrideExisting"));
+            }
+        }
+
+        return singularConfig
+    }
+
+    @ReactMethod
+    public void init(String configJsonString) {
+        SingularConfig config = parseSingularConfig(configJsonString)
         Singular.init(reactContext, config);
     }
 
