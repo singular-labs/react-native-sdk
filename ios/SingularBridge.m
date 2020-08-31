@@ -54,7 +54,7 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     NSDictionary* singularConfigDict = [SingularBridge jsonToDictionary:jsonSingularConfig];
     
-    NSString* apiKey = [singularConfigDict objectForKey:@"apiKey"];
+    NSString* apiKey = [singularConfigDict objectForKey:@"apikey"];
     NSString* apiSecret = [singularConfigDict objectForKey:@"secret"];
     
     // General Fields
@@ -70,7 +70,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     
     // Global Properties fields
     NSDictionary* globalProperties = [singularConfigDict objectForKey:@"globalProperties"];
-    if ([globalProperties count] > 0){
+    if (globalProperties && [globalProperties count] > 0){
          for (NSDictionary* property in [globalProperties allValues]) {
              [singularConfig setGlobalProperty:[property objectForKey:@"Key"]
                                      withValue:[property objectForKey:@"Value"]
@@ -82,9 +82,8 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     singularConfig.skAdNetworkEnabled = [[singularConfigDict objectForKey:@"skAdNetworkEnabled"] boolValue];
     singularConfig.manualSkanConversionManagement = [[singularConfigDict objectForKey:@"manualSkanConversionManagement"] boolValue];
     singularConfig.conversionValueUpdatedCallback = ^(NSInteger conversionValue) {
-        [SingularBridge handleConversionValue: conversionValue];
+        [SingularBridge handleConversionValueUpdated:conversionValue];
     };
-        
     singularConfig.waitForTrackingAuthorizationWithTimeoutInterval =
         [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
     
@@ -204,9 +203,9 @@ RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
     }];
 }
 
-+(void)handleConversionValue:(NSInteger)conversionValue{
++(void)handleConversionValueUpdated:(NSInteger)conversionValue{
     // Raising the Conversion Value handler in the react-native code
-    [eventEmitter sendEventWithName:@"ConversionValueHandler" body:@(conversionValue)];
+    [eventEmitter sendEventWithName:@"ConversionValueUpdatedHandler" body:@(conversionValue)];
 }
 
 @end

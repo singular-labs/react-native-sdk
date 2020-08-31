@@ -8,7 +8,8 @@ export class SingularConfig {
     // SKAN
     skAdNetworkEnabled;
     manualSkanConversionManagement;
-    conversionValueHandler;
+    conversionValueUpdatedHandler;
+    waitForTrackingAuthorizationWithTimeoutInterval;
 
     constructor(apikey, secret) {
         this.apikey = apikey;
@@ -16,6 +17,7 @@ export class SingularConfig {
         this.sessionTimeout = -1; // default -1, uses default timeout (60s)
         this.skAdNetworkEnabled = false;
         this.manualSkanConversionManagement = false;
+        this.waitForTrackingAuthorizationWithTimeoutInterval = 0;
     }
 
     withSessionTimeoutInSec(sessionTimeout){
@@ -38,13 +40,18 @@ export class SingularConfig {
         return this;
     }
 
-    withManualSkanConversionManagement(manualSkanConversionManagement) {
-        this.manualSkanConversionManagement = manualSkanConversionManagement;
+    withManualSkanConversionManagement() {
+        this.manualSkanConversionManagement = true;
         return this;
     }
 
-    withConversionValueHandler(conversionValueHandler){
-        this.conversionValueHandler = conversionValueHandler;
+    withConversionValueUpdatedHandler(conversionValueUpdatedHandler){
+        this.conversionValueUpdatedHandler = conversionValueUpdatedHandler;
+        return this;
+    }
+
+    withWaitForTrackingAuthorizationWithTimeoutInterval(waitForTrackingAuthorizationWithTimeoutInterval){
+        this.waitForTrackingAuthorizationWithTimeoutInterval = waitForTrackingAuthorizationWithTimeoutInterval;
         return this;
     }
 }

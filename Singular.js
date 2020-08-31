@@ -12,7 +12,7 @@ export class Singular {
 
     static init(singularConfig) {
         this._singularLinkHandler = singularConfig.singularLinkHandler;
-        this._conversionValueHandler = singularConfig.conversionValueHandler;
+        this._conversionValueUpdatedHandler = singularConfig.conversionValueUpdatedHandler;
 
         SingularBridge.init(JSON.stringify(singularConfig))
 
@@ -25,10 +25,10 @@ export class Singular {
                 });
 
         this._singularNativeEmitter.addListener(
-                'ConversionValueHandler',
+                'ConversionValueUpdatedHandler',
                 conversionValue => {
-                    if (this._conversionValueHandler) {
-                        this._conversionValueHandler(conversionValue);
+                    if (this._conversionValueUpdatedHandler) {
+                        this._conversionValueUpdatedHandler(conversionValue);
                     }
                 });
 

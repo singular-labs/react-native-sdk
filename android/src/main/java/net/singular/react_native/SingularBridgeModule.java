@@ -49,36 +49,15 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         try {
             JSONObject configJson = new JSONObject(configString);
 
-            String apikey = configJson.optString("apiKey", null);
+            String apikey = configJson.optString("apikey", null);
             String secret = configJson.optString("secret", null);
 
             SingularConfig singularConfig = new SingularConfig(apikey, secret);
-
-            String facebookAppId = configJson.optString("facebookAppId", null);
-            String openUri = configJson.optString("openUri", null);
-
-            if (!TextUtils.isEmpty(facebookAppId)) {
-                singularConfig.withFacebookAppId(facebookAppId);
-            }
-
-            if (!TextUtils.isEmpty(openUri)) {
-                Uri uri = Uri.parse(openUri);
-                singularConfig.withOpenURI(uri);
-            }
 
             long ddlTimeoutSec = configJson.optLong("ddlTimeoutSec", 0);
 
             if (ddlTimeoutSec > 0) {
                 singularConfig.withDDLTimeoutInSec(ddlTimeoutSec);
-            }
-
-            List<String> domains = new ArrayList<>();
-            JSONArray supportedDomains = configJson.optJSONArray("supportedDomains");
-
-            if (supportedDomains != null) {
-                for (int i = 0; i < supportedDomains.length(); i++) {
-                    domains.add(supportedDomains.getString(i));
-                }
             }
 
             singularLinkHandler = new SingularLinkHandler() {
@@ -102,18 +81,6 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 getCurrentActivity().getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
 
                 config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
-            }
-
-            boolean enableLogging = configJson.optBoolean("enableLogging", false);
-
-            if (enableLogging) {
-                singularConfig.withLoggingEnabled();
-            }
-
-            long sessionTimeoutSec = configJson.optLong("shortlinkResolveTimeout", 0);
-
-            if (sessionTimeoutSec > 0) {
-                singularConfig.withSessionTimeoutInSec(sessionTimeoutSec);
             }
 
             String customUserId = configJson.optString("customUserId", null);
