@@ -14,8 +14,6 @@ export class Singular {
         this._singularLinkHandler = singularConfig.singularLinkHandler;
         this._conversionValueUpdatedHandler = singularConfig.conversionValueUpdatedHandler;
 
-        SingularBridge.init(JSON.stringify(singularConfig))
-
         this._singularNativeEmitter.addListener(
                 'SingularLinkHandler',
                 singularLinkParams => {
@@ -32,6 +30,7 @@ export class Singular {
                     }
                 });
 
+        SingularBridge.init(JSON.stringify(singularConfig));
         SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
     }
 
