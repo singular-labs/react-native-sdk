@@ -45,82 +45,9 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         return REACT_CLASS;
     }
 
-    private SingularConfig parseSingularConfig(String configString) {
-        try {
-            JSONObject configJson = new JSONObject(configString);
-
-            String apikey = configJson.optString("apikey", null);
-            String secret = configJson.optString("secret", null);
-
-            SingularConfig singularConfig = new SingularConfig(apikey, secret);
-
-            long ddlTimeoutSec = configJson.optLong("ddlTimeoutSec", 0);
-
-            if (ddlTimeoutSec > 0) {
-                singularConfig.withDDLTimeoutInSec(ddlTimeoutSec);
-            }
-
-            singularLinkHandler = new SingularLinkHandler() {
-                @Override
-                public void onResolved(SingularLinkParams singularLinkParams) {
-
-                    WritableMap params = Arguments.createMap();
-                    params.putString("deeplink", singularLinkParams.getDeeplink());
-                    params.putString("passthrough", singularLinkParams.getPassthrough());
-                    params.putBoolean("isDeferred", singularLinkParams.isDeferred());
-
-                    // Raising the Singular Link handler in the react-native code
-                    reactContext.
-                            getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                            .emit("SingularLinkHandler", params);
-                }
-            };
-
-            if (reactContext.hasCurrentActivity() && getCurrentActivity().getApplication() != null) {
-                // We register to the lifecycle events to auto detect new intent
-                getCurrentActivity().getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
-
-                config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
-            }
-
-            String customUserId = configJson.optString("customUserId", null);
-
-            if (customUserId != null) {
-                singularConfig.withCustomUserId(customUserId);
-            }
-
-            String imei = configJson.optString("imei", null);
-
-            if (imei != null) {
-                singularConfig.withIMEI(imei);
-            }
-
-            JSONObject globalProperties = configJson.optJSONObject("globalProperties");
-
-            // Adding all of the global properties to the singular config
-            if (globalProperties != null) {
-                Iterator<String> iter = globalProperties.keys();
-                while (iter.hasNext()) {
-                    String key = iter.next();
-                    JSONObject property = globalProperties.getJSONObject(key);
-
-                    singularConfig.withGlobalProperty(property.getString("Key"),
-                            property.getString("Value"),
-                            property.getBoolean("OverrideExisting"));
-                }
-            }
-
-            return singularConfig;
-
-        } catch (JSONException ignored) {
-        }
-
-        return null;
-    }
-
     @ReactMethod
     public void init(String configJsonString) {
-        SingularConfig config = parseSingularConfig(configJsonString);
+        buildSingularConfig(configJsonString);
         Singular.init(reactContext, config);
     }
 
@@ -207,6 +134,73 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setReactSDKVersion(String wrapper, String version) {
         Singular.setWrapperNameAndVersion(wrapper, version);
+    }
+
+    private void buildSingularConfig(String configString) {
+        try {
+            JSONObject configJson = new JSONObject(configString);
+
+            String apikey = configJson.optString("apikey", null);
+            String secret = configJson.optString("secret", null);
+
+            config = new SingularConfig(apikey, secret);
+
+            long ddlTimeoutSec = configJson.optLong("ddlTimeoutSec", 0);
+
+            if (ddlTimeoutSec > 0) {
+                config.withDDLTimeoutInSec(ddlTimeoutSec);
+            }
+
+            singularLinkHandler = new SingularLinkHandler() {
+                @Override
+                public void onResolved(SingularLinkParams singularLinkParams) {
+
+                    WritableMap params = Arguments.createMap();
+                    params.putString("deeplink", singularLinkParams.getDeeplink());
+                    params.putString("passthrough", singularLinkParams.getPassthrough());
+                    params.putBoolean("isDeferred", singularLinkParams.isDeferred());
+
+                    // Raising the Singular Link handler in the react-native code
+                    reactContext.
+                            getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("SingularLinkHandler", params);
+                }
+            };
+
+            if (reactContext.hasCurrentActivity() && getCurrentActivity().getApplication() != null) {
+                // We register to the lifecycle events to auto detect new intent
+                getCurrentActivity().getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
+
+                config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
+            }
+
+            String customUserId = configJson.optString("customUserId", null);
+
+            if (customUserId != null) {
+                config.withCustomUserId(customUserId);
+            }
+
+            String imei = configJson.optString("imei", null);
+
+            if (imei != null) {
+                config.withIMEI(imei);
+            }
+
+            JSONObject globalProperties = configJson.optJSONObject("globalProperties");
+
+            // Adding all of the global properties to the singular config
+            if (globalProperties != null) {
+                Iterator<String> iter = globalProperties.keys();
+                while (iter.hasNext()) {
+                    String key = iter.next();
+                    JSONObject property = globalProperties.getJSONObject(key);
+
+                    config.withGlobalProperty(property.getString("Key"),
+                            property.getString("Value"),
+                            property.getBoolean("OverrideExisting"));
+                }
+            }
+        } catch (JSONException ignored) {}
     }
 
     private Map<String, Object> convertJsonToMap(String json) {
