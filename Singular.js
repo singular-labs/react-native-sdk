@@ -1,7 +1,5 @@
-import {NativeEventEmitter, NativeModules} from 'react-native';
+import {NativeEventEmitter, NativeModules, Platform} from 'react-native';
 import {version} from './package.json';
-import { Platform, StyleSheet } from 'react-native';
-
 
 const {SingularBridge} = NativeModules;
 
@@ -124,8 +122,6 @@ export class Singular {
         if (Platform.OS === 'ios') {
             return SingularBridge.skanUpdateConversionValue(conversionValue);
         }
-
-        console.log(PLATFORM_NOT_SUPPORTED)
         return true
     }
 
@@ -133,17 +129,12 @@ export class Singular {
         if (Platform.OS === 'ios') {
             return SingularBridge.skanGetConversionValue();
         }
-
-        console.log(PLATFORM_NOT_SUPPORTED)
         return null
     }
 
     static skanRegisterAppForAdNetworkAttribution() {
         if (Platform.OS === 'ios') {
             SingularBridge.skanRegisterAppForAdNetworkAttribution();
-            return
         }
-
-        console.log(PLATFORM_NOT_SUPPORTED)
     }
 }
