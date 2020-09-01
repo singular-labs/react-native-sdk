@@ -5,10 +5,19 @@ export class SingularConfig {
     customUserId;
     singularLinkHandler;
 
+    // SKAN
+    skAdNetworkEnabled;
+    manualSkanConversionManagement;
+    conversionValueUpdatedHandler;
+    waitForTrackingAuthorizationWithTimeoutInterval;
+
     constructor(apikey, secret) {
         this.apikey = apikey;
         this.secret = secret;
         this.sessionTimeout = -1; // default -1, uses default timeout (60s)
+        this.skAdNetworkEnabled = false;
+        this.manualSkanConversionManagement = false;
+        this.waitForTrackingAuthorizationWithTimeoutInterval = 0;
     }
 
     withSessionTimeoutInSec(sessionTimeout){
@@ -23,6 +32,26 @@ export class SingularConfig {
 
     withSingularLink(singularLinkHandler){
         this.singularLinkHandler = singularLinkHandler;
+        return this;
+    }
+
+    withSkAdNetworkEnabled(skAdNetworkEnabled) {
+        this.skAdNetworkEnabled = skAdNetworkEnabled;
+        return this;
+    }
+
+    withManualSkanConversionManagement() {
+        this.manualSkanConversionManagement = true;
+        return this;
+    }
+
+    withConversionValueUpdatedHandler(conversionValueUpdatedHandler){
+        this.conversionValueUpdatedHandler = conversionValueUpdatedHandler;
+        return this;
+    }
+
+    withWaitForTrackingAuthorizationWithTimeoutInterval(waitForTrackingAuthorizationWithTimeoutInterval){
+        this.waitForTrackingAuthorizationWithTimeoutInterval = waitForTrackingAuthorizationWithTimeoutInterval;
         return this;
     }
 }

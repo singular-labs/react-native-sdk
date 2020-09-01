@@ -1,4 +1,4 @@
-import {NativeEventEmitter, NativeModules} from 'react-native';
+import {NativeEventEmitter, NativeModules, Platform} from 'react-native';
 import {version} from './package.json';
 
 const {SingularBridge} = NativeModules;
@@ -8,25 +8,29 @@ const SDK_VERSION = version;
 
 export class Singular {
 
-    static _singularLinkHandlerEmitter = new NativeEventEmitter(SingularBridge);
+    static _singularNativeEmitter = new NativeEventEmitter(SingularBridge);
 
     static init(singularConfig) {
-        if (!singularConfig.singularLinkHandler) {
-            SingularBridge.init(singularConfig.apikey, singularConfig.secret, singularConfig.customUserId, singularConfig.sessionTimeout);
-        } else {
-            this._singularLinkHandler = singularConfig.singularLinkHandler;
+        this._singularLinkHandler = singularConfig.singularLinkHandler;
+        this._conversionValueUpdatedHandler = singularConfig.conversionValueUpdatedHandler;
 
-            this._singularLinkHandlerEmitter.addListener(
-                'SingularLinkHandler',
-                singularLinkParams => {
-                    if (this._singularLinkHandler) {
-                        this._singularLinkHandler(singularLinkParams);
-                    }
-                });
+        this._singularNativeEmitter.addListener(
+            'SingularLinkHandler',
+            singularLinkParams => {
+                if (this._singularLinkHandler) {
+                    this._singularLinkHandler(singularLinkParams);
+                }
+            });
 
-            SingularBridge.initWithSingularLink(singularConfig.apikey, singularConfig.secret, singularConfig.customUserId, singularConfig.sessionTimeout);
-        }
+        this._singularNativeEmitter.addListener(
+            'ConversionValueUpdatedHandler',
+            conversionValue => {
+                if (this._conversionValueUpdatedHandler) {
+                    this._conversionValueUpdatedHandler(conversionValue);
+                }
+            });
 
+        SingularBridge.init(JSON.stringify(singularConfig));
         SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
     }
 
@@ -109,5 +113,26 @@ export class Singular {
 
     static getLimitDataSharing() {
         return SingularBridge.getLimitDataSharing();
+    }
+
+    // SKAN methods
+    static skanUpdateConversionValue(conversionValue) {
+        if (Platform.OS === 'ios') {
+            return SingularBridge.skanUpdateConversionValue(conversionValue);
+        }
+        return true
+    }
+
+    static skanGetConversionValue() {
+        if (Platform.OS === 'ios') {
+            return SingularBridge.skanGetConversionValue();
+        }
+        return null
+    }
+
+    static skanRegisterAppForAdNetworkAttribution() {
+        if (Platform.OS === 'ios') {
+            SingularBridge.skanRegisterAppForAdNetworkAttribution();
+        }
     }
 }

@@ -1,6 +1,7 @@
 #import "SingularBridge.h"
 
 #import <Singular/Singular.h>
+#import <Singular/SingularConfig.h>
 
 #if __has_include(<React/RCTBridge.h>)
 #import <React/RCTBridge.h>
@@ -22,7 +23,6 @@
 static NSString* apikey;
 static NSString* secret;
 static NSDictionary* launchOptions;
-static BOOL isSingularLinkEnabled = NO;
 static RCTEventEmitter* eventEmitter;
 
 // Saving the launchOptions for later when the SDK is initialized to handle Singular Links.
@@ -34,10 +34,6 @@ static RCTEventEmitter* eventEmitter;
 // Handling Singular Link when the app is opened from a Singular Link while it was in the background.
 // The client will need to call this method in the AppDelegate in continueUserActivity.
 +(void)startSessionWithUserActivity:(NSUserActivity*)userActivity{
-    if(!isSingularLinkEnabled){
-        return;
-    }
-    
     [Singular startSession:apikey
                    withKey:secret
            andUserActivity:userActivity
@@ -48,47 +44,50 @@ static RCTEventEmitter* eventEmitter;
 
 RCT_EXPORT_MODULE();
 
-- (NSArray<NSString *> *)supportedEvents
-{
-    return @[@"SingularLinkHandler"];
+- (NSArray<NSString *> *)supportedEvents {
+    return @[@"SingularLinkHandler", @"ConversionValueUpdatedHandler"];
 }
 
-RCT_EXPORT_METHOD(init:(NSString*)apikey
-                  secret:(NSString*)secret
-                  customUserId:(NSString*)customUserId
-                  sessionTimeout:(nonnull NSNumber*)sessionTimeout){
-    if(customUserId){
-        [Singular setCustomUserId:customUserId];
+// Init method using a json string representing the config
+RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
+    NSDictionary* singularConfigDict = [SingularBridge jsonToDictionary:jsonSingularConfig];
+    
+    NSString* apiKey = [singularConfigDict objectForKey:@"apikey"];
+    NSString* apiSecret = [singularConfigDict objectForKey:@"secret"];
+    
+    // General Fields
+    SingularConfig* singularConfig = [[SingularConfig alloc] initWithApiKey:apiKey andSecret:apiSecret];
+    
+    // Singular Links fields
+    singularConfig.launchOptions = launchOptions;
+    singularConfig.supportedDomains = [singularConfigDict objectForKey:@"supportedDomains"];
+    singularConfig.shortLinkResolveTimeOut = [[singularConfigDict objectForKey:@"shortlinkResolveTimeout"] integerValue];
+    singularConfig.singularLinksHandler = ^(SingularLinkParams * params){
+        [SingularBridge handleSingularLink:params];
+    };
+    
+    // Global Properties fields
+    NSDictionary* globalProperties = [singularConfigDict objectForKey:@"globalProperties"];
+    if (globalProperties && [globalProperties count] > 0){
+         for (NSDictionary* property in [globalProperties allValues]) {
+             [singularConfig setGlobalProperty:[property objectForKey:@"Key"]
+                                     withValue:[property objectForKey:@"Value"]
+                              overrideExisting:[[property objectForKey:@"OverrideExisting"] boolValue]];
+        }
     }
     
-    if([sessionTimeout intValue] >= 0){
-        [Singular setSessionTimeout:[sessionTimeout intValue]];
-    }
+    // SKAN
+    singularConfig.skAdNetworkEnabled = [[singularConfigDict objectForKey:@"skAdNetworkEnabled"] boolValue];
+    singularConfig.manualSkanConversionManagement = [[singularConfigDict objectForKey:@"manualSkanConversionManagement"] boolValue];
+    singularConfig.conversionValueUpdatedCallback = ^(NSInteger conversionValue) {
+        [SingularBridge handleConversionValueUpdated:conversionValue];
+    };
+    singularConfig.waitForTrackingAuthorizationWithTimeoutInterval =
+        [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
     
-    [Singular startSession:apikey withKey:secret];
-}
-
-RCT_EXPORT_METHOD(initWithSingularLink:(NSString*)apikey
-                  secret:(NSString*)secret
-                  customUserId:(NSString*)customUserId
-                  sessionTimeout:(nonnull NSNumber*)sessionTimeout){
-    if(customUserId){
-        [Singular setCustomUserId:customUserId];
-    }
-    
-    if([sessionTimeout intValue] >= 0){
-        [Singular setSessionTimeout:[sessionTimeout intValue]];
-    }
-    
-    isSingularLinkEnabled = YES;
     eventEmitter = self;
     
-    [Singular startSession:apikey
-                   withKey:secret
-          andLaunchOptions:launchOptions
-   withSingularLinkHandler:^(SingularLinkParams * params){
-        [SingularBridge handleSingularLink:params];
-    }];
+    [Singular start:singularConfig];
 }
 
 RCT_EXPORT_METHOD(setCustomUserId:(NSString*)customUserId){
@@ -159,6 +158,19 @@ RCT_EXPORT_METHOD(setReactSDKVersion:(NSString*)wrapper version:(NSString*)versi
     [Singular setWrapperName:wrapper andVersion:version];
 }
 
+// export SKAN methods
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanUpdateConversionValue:(NSInteger)conversionValue){
+    return [Singular skanUpdateConversionValue:conversionValue] ? @YES : @NO;
+}
+
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanGetConversionValue){
+    return [Singular skanGetConversionValue];
+}
+
+RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
+    [Singular skanRegisterAppForAdNetworkAttribution];
+}
+
 #pragma mark - Private methods
 
 +(NSDictionary*)jsonToDictionary:(NSString*)json{
@@ -172,21 +184,25 @@ RCT_EXPORT_METHOD(setReactSDKVersion:(NSString*)wrapper version:(NSString*)versi
                                                          options:NSJSONReadingMutableContainers
                                                            error:&jsonError];
     
-    if(!jsonError){
+    if(jsonError){
         return nil;
     }
     
     return data;
 }
 
-+(void)handleSingularLink:(SingularLinkParams*)params{
-    
++(void)handleSingularLink:(SingularLinkParams*)params {
     // Raising the Singular Link handler in the react-native code
     [eventEmitter sendEventWithName:@"SingularLinkHandler" body:@{
         @"deeplink": [params getDeepLink],
         @"passthrough": [params getPassthrough],
         @"isDeferred": [params isDeferred] ? @YES : @NO
     }];
+}
+
++(void)handleConversionValueUpdated:(NSInteger)conversionValue {
+    // Raising the Conversion Value handler in the react-native code
+    [eventEmitter sendEventWithName:@"ConversionValueUpdatedHandler" body:@(conversionValue)];
 }
 
 @end
