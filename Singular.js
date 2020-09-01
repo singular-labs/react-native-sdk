@@ -6,8 +6,6 @@ const {SingularBridge} = NativeModules;
 const SDK_NAME = 'ReactNative';
 const SDK_VERSION = version;
 
-const PLATFORM_NOT_SUPPORTED = 'this function is not supported in this plaform'
-
 export class Singular {
 
     static _singularNativeEmitter = new NativeEventEmitter(SingularBridge);
