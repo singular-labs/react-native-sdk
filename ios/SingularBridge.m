@@ -25,7 +25,6 @@ static NSString* secret;
 static NSDictionary* launchOptions;
 static RCTEventEmitter* eventEmitter;
 
-
 // Saving the launchOptions for later when the SDK is initialized to handle Singular Links.
 // The client will need to call this method is the AppDelegate in didFinishLaunchingWithOptions.
 +(void)startSessionWithLaunchOptions:(NSDictionary*)options{
@@ -45,12 +44,11 @@ static RCTEventEmitter* eventEmitter;
 
 RCT_EXPORT_MODULE();
 
-- (NSArray<NSString *> *)supportedEvents
-{
-    return @[@"SingularLinkHandler"];
+- (NSArray<NSString *> *)supportedEvents {
+    return @[@"SingularLinkHandler", @"ConversionValueUpdatedHandler"];
 }
 
-// init function using config json
+// Init method using a json string representing the config
 RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     NSDictionary* singularConfigDict = [SingularBridge jsonToDictionary:jsonSingularConfig];
     
@@ -78,7 +76,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
         }
     }
     
-    // skan
+    // SKAN
     singularConfig.skAdNetworkEnabled = [[singularConfigDict objectForKey:@"skAdNetworkEnabled"] boolValue];
     singularConfig.manualSkanConversionManagement = [[singularConfigDict objectForKey:@"manualSkanConversionManagement"] boolValue];
     singularConfig.conversionValueUpdatedCallback = ^(NSInteger conversionValue) {
@@ -160,7 +158,7 @@ RCT_EXPORT_METHOD(setReactSDKVersion:(NSString*)wrapper version:(NSString*)versi
     [Singular setWrapperName:wrapper andVersion:version];
 }
 
-// export skan nmeods
+// export SKAN methods
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanUpdateConversionValue:(NSInteger)conversionValue){
     return [Singular skanUpdateConversionValue:conversionValue] ? @YES : @NO;
 }
@@ -186,15 +184,14 @@ RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
                                                          options:NSJSONReadingMutableContainers
                                                            error:&jsonError];
     
-    if(!jsonError){
+    if(jsonError){
         return nil;
     }
     
     return data;
 }
 
-+(void)handleSingularLink:(SingularLinkParams*)params{
-    
++(void)handleSingularLink:(SingularLinkParams*)params {
     // Raising the Singular Link handler in the react-native code
     [eventEmitter sendEventWithName:@"SingularLinkHandler" body:@{
         @"deeplink": [params getDeepLink],
@@ -203,7 +200,7 @@ RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
     }];
 }
 
-+(void)handleConversionValueUpdated:(NSInteger)conversionValue{
++(void)handleConversionValueUpdated:(NSInteger)conversionValue {
     // Raising the Conversion Value handler in the react-native code
     [eventEmitter sendEventWithName:@"ConversionValueUpdatedHandler" body:@(conversionValue)];
 }
