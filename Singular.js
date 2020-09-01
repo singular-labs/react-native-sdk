@@ -1,10 +1,14 @@
 import {NativeEventEmitter, NativeModules} from 'react-native';
 import {version} from './package.json';
+import { Platform, StyleSheet } from 'react-native';
+
 
 const {SingularBridge} = NativeModules;
 
 const SDK_NAME = 'ReactNative';
 const SDK_VERSION = version;
+
+const PLATFORM_NOT_SUPPORTED = 'this function is not supported in this plaform'
 
 export class Singular {
 
@@ -15,20 +19,20 @@ export class Singular {
         this._conversionValueUpdatedHandler = singularConfig.conversionValueUpdatedHandler;
 
         this._singularNativeEmitter.addListener(
-                'SingularLinkHandler',
-                singularLinkParams => {
-                    if (this._singularLinkHandler) {
-                        this._singularLinkHandler(singularLinkParams);
-                    }
-                });
+            'SingularLinkHandler',
+            singularLinkParams => {
+                if (this._singularLinkHandler) {
+                    this._singularLinkHandler(singularLinkParams);
+                }
+            });
 
         this._singularNativeEmitter.addListener(
-                'ConversionValueUpdatedHandler',
-                conversionValue => {
-                    if (this._conversionValueUpdatedHandler) {
-                        this._conversionValueUpdatedHandler(conversionValue);
-                    }
-                });
+            'ConversionValueUpdatedHandler',
+            conversionValue => {
+                if (this._conversionValueUpdatedHandler) {
+                    this._conversionValueUpdatedHandler(conversionValue);
+                }
+            });
 
         SingularBridge.init(JSON.stringify(singularConfig));
         SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
@@ -113,5 +117,33 @@ export class Singular {
 
     static getLimitDataSharing() {
         return SingularBridge.getLimitDataSharing();
+    }
+
+    // SKAN methods
+    static skanUpdateConversionValue(conversionValue) {
+        if (Platform.OS === 'ios') {
+            return SingularBridge.skanUpdateConversionValue(conversionValue);
+        }
+
+        console.log(PLATFORM_NOT_SUPPORTED)
+        return true
+    }
+
+    static skanGetConversionValue() {
+        if (Platform.OS === 'ios') {
+            return SingularBridge.skanGetConversionValue();
+        }
+
+        console.log(PLATFORM_NOT_SUPPORTED)
+        return null
+    }
+
+    static skanRegisterAppForAdNetworkAttribution() {
+        if (Platform.OS === 'ios') {
+            SingularBridge.skanRegisterAppForAdNetworkAttribution();
+            return
+        }
+
+        console.log(PLATFORM_NOT_SUPPORTED)
     }
 }
