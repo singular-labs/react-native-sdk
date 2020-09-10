@@ -194,8 +194,8 @@ RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
 +(void)handleSingularLink:(SingularLinkParams*)params {
     // Raising the Singular Link handler in the react-native code
     [eventEmitter sendEventWithName:@"SingularLinkHandler" body:@{
-        @"deeplink": [params getDeepLink],
-        @"passthrough": [params getPassthrough],
+        @"deeplink": [params getDeepLink] ? [params getDeepLink] : @"",
+        @"passthrough": [params getPassthrough] ? [params getPassthrough] : @"",
         @"isDeferred": [params isDeferred] ? @YES : @NO
     }];
 }
