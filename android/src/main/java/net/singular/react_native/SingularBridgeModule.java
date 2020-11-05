@@ -6,6 +6,7 @@ import com.facebook.react.bridge.Arguments;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Intent;
 import android.os.Bundle;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -33,6 +34,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
     private static ReactApplicationContext reactContext = null;
     private SingularConfig config;
     private SingularLinkHandler singularLinkHandler;
+    private int currentIntentHash;
 
     public SingularBridgeModule(ReactApplicationContext context) {
         super(context);
@@ -171,7 +173,12 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 // We register to the lifecycle events to auto detect new intent
                 getCurrentActivity().getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
 
-                config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
+                int intentHash = getCurrentActivity().getIntent().hashCode();
+
+                if (intentHash != currentIntentHash) {
+                    currentIntentHash = intentHash;
+                    config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
+                }
             }
 
             String customUserId = configJson.optString("customUserId", null);
@@ -200,7 +207,8 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                             property.getBoolean("OverrideExisting"));
                 }
             }
-        } catch (JSONException ignored) {}
+        } catch (JSONException ignored) {
+        }
     }
 
     private Map<String, Object> convertJsonToMap(String json) {
@@ -231,11 +239,15 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
 
         @Override
         public void onActivityStarted(Activity activity) {
+            Intent intent = activity.getIntent();
 
             // We want to trigger the singular link handler only if it's registered
-            if (config != null && singularLinkHandler != null && activity.getIntent().getData() != null) {
+            if (config != null &&
+                    singularLinkHandler != null &&
+                    intent.hashCode() != currentIntentHash &&
+                    activity.getIntent().getData() != null) {
+                currentIntentHash = intent.hashCode();
                 config.withSingularLink(activity.getIntent(), singularLinkHandler);
-
                 Singular.init(reactContext, config);
             }
         }
