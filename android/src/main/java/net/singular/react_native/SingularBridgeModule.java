@@ -32,9 +32,9 @@ import java.util.Map;
 public class SingularBridgeModule extends ReactContextBaseJavaModule {
     public static final String REACT_CLASS = "SingularBridge";
     private static ReactApplicationContext reactContext = null;
-    private SingularConfig config;
-    private SingularLinkHandler singularLinkHandler;
-    private int currentIntentHash;
+    private static SingularConfig config;
+    private static SingularLinkHandler singularLinkHandler;
+    private static int currentIntentHash;
 
     public SingularBridgeModule(ReactApplicationContext context) {
         super(context);
@@ -169,10 +169,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 }
             };
 
-            if (reactContext.hasCurrentActivity() && getCurrentActivity().getApplication() != null) {
-                // We register to the lifecycle events to auto detect new intent
-                getCurrentActivity().getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
-
+            if (reactContext.hasCurrentActivity() && getCurrentActivity().getIntent() != null) {
                 int intentHash = getCurrentActivity().getIntent().hashCode();
 
                 if (intentHash != currentIntentHash) {
@@ -231,50 +228,19 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         return args;
     }
 
-    private Application.ActivityLifecycleCallbacks lifecycleCallbacks = new Application.ActivityLifecycleCallbacks() {
-        @Override
-        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+    public static void onNewIntent(Intent intent) {
+        if(intent == null){
+            return;
         }
 
-        @Override
-        public void onActivityStarted(Activity activity) {
-            Intent intent = activity.getIntent();
-
-            // We want to trigger the singular link handler only if it's registered
-            if (config != null &&
-                    singularLinkHandler != null &&
-                    intent.hashCode() != currentIntentHash &&
-                    activity.getIntent().getData() != null) {
-                currentIntentHash = intent.hashCode();
-                config.withSingularLink(activity.getIntent(), singularLinkHandler);
-                Singular.init(reactContext, config);
-            }
+        // We want to trigger the singular link handler only if it's registered
+        if (config != null &&
+                singularLinkHandler != null &&
+                intent.hashCode() != currentIntentHash &&
+                intent.getData() != null) {
+            currentIntentHash = intent.hashCode();
+            config.withSingularLink(intent, singularLinkHandler);
+            Singular.init(reactContext, config);
         }
-
-        @Override
-        public void onActivityResumed(Activity activity) {
-
-        }
-
-        @Override
-        public void onActivityPaused(Activity activity) {
-
-        }
-
-        @Override
-        public void onActivityStopped(Activity activity) {
-
-        }
-
-        @Override
-        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
-        }
-
-        @Override
-        public void onActivityDestroyed(Activity activity) {
-
-        }
-    };
+    }
 }
