@@ -64,6 +64,11 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void setDeviceCustomUserId(String customUserId) {
+        Singular.setDeviceCustomUserId(customUserId);
+    }
+
+    @ReactMethod
     public void event(String name) {
         Singular.event(name);
     }

@@ -98,6 +98,10 @@ RCT_EXPORT_METHOD(unsetCustomUserId){
     [Singular unsetCustomUserId];
 }
 
+RCT_EXPORT_METHOD(setDeviceCustomUserId:(NSString*)customUserId){
+    [Singular setDeviceCustomUserId:customUserId];
+}
+
 RCT_EXPORT_METHOD(event:(NSString*)eventName){
     [Singular event:eventName];
 }

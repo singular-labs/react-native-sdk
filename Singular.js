@@ -42,6 +42,10 @@ export class Singular {
         SingularBridge.unsetCustomUserId();
     }
 
+    static setDeviceCustomUserId(customUserId) {
+        SingularBridge.setDeviceCustomUserId(customUserId);
+    }
+
     static event(eventName) {
         SingularBridge.event(eventName);
     }
