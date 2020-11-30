@@ -61,7 +61,6 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     // Singular Links fields
     singularConfig.launchOptions = launchOptions;
     singularConfig.supportedDomains = [singularConfigDict objectForKey:@"supportedDomains"];
-    singularConfig.shortLinkResolveTimeOut = [[singularConfigDict objectForKey:@"shortlinkResolveTimeout"] integerValue];
     singularConfig.singularLinksHandler = ^(SingularLinkParams * params){
         [SingularBridge handleSingularLink:params];
     };
