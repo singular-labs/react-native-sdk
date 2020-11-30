@@ -52,11 +52,11 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     NSDictionary* singularConfigDict = [SingularBridge jsonToDictionary:jsonSingularConfig];
     
-    NSString* apiKey = [singularConfigDict objectForKey:@"apikey"];
-    NSString* apiSecret = [singularConfigDict objectForKey:@"secret"];
+    apikey = [singularConfigDict objectForKey:@"apikey"];
+    secret = [singularConfigDict objectForKey:@"secret"];
     
     // General Fields
-    SingularConfig* singularConfig = [[SingularConfig alloc] initWithApiKey:apiKey andSecret:apiSecret];
+    SingularConfig* singularConfig = [[SingularConfig alloc] initWithApiKey:apikey andSecret:secret];
     
     // Singular Links fields
     singularConfig.launchOptions = launchOptions;
