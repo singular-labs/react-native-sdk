@@ -195,6 +195,18 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 config.withIMEI(imei);
             }
 
+            int sessionTimeout = configJson.optInt("sessionTimeout", -1);
+
+            if (sessionTimeout >= 0) {
+                config.withSessionTimeoutInSec(sessionTimeout);
+            }
+
+            Object limitDataSharing = configJson.opt("limitDataSharing");
+
+            if (limitDataSharing != JSONObject.NULL) {
+                config.withLimitDataSharing((boolean)limitDataSharing);
+            }
+
             JSONObject globalProperties = configJson.optJSONObject("globalProperties");
 
             // Adding all of the global properties to the singular config
