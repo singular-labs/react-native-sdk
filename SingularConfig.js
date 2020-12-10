@@ -11,6 +11,9 @@ export class SingularConfig {
     conversionValueUpdatedHandler;
     waitForTrackingAuthorizationWithTimeoutInterval;
 
+    // Limit Data Sharing
+    limitDataSharing;
+
     constructor(apikey, secret) {
         this.apikey = apikey;
         this.secret = secret;
@@ -18,19 +21,20 @@ export class SingularConfig {
         this.skAdNetworkEnabled = false;
         this.manualSkanConversionManagement = false;
         this.waitForTrackingAuthorizationWithTimeoutInterval = 0;
+        this.limitDataSharing = null;
     }
 
-    withSessionTimeoutInSec(sessionTimeout){
+    withSessionTimeoutInSec(sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
         return this;
     }
 
-    withCustomUserId(customUserId){
+    withCustomUserId(customUserId) {
         this.customUserId = customUserId;
         return this;
     }
 
-    withSingularLink(singularLinkHandler){
+    withSingularLink(singularLinkHandler) {
         this.singularLinkHandler = singularLinkHandler;
         return this;
     }
@@ -45,13 +49,18 @@ export class SingularConfig {
         return this;
     }
 
-    withConversionValueUpdatedHandler(conversionValueUpdatedHandler){
+    withConversionValueUpdatedHandler(conversionValueUpdatedHandler) {
         this.conversionValueUpdatedHandler = conversionValueUpdatedHandler;
         return this;
     }
 
-    withWaitForTrackingAuthorizationWithTimeoutInterval(waitForTrackingAuthorizationWithTimeoutInterval){
+    withWaitForTrackingAuthorizationWithTimeoutInterval(waitForTrackingAuthorizationWithTimeoutInterval) {
         this.waitForTrackingAuthorizationWithTimeoutInterval = waitForTrackingAuthorizationWithTimeoutInterval;
+        return this;
+    }
+
+    withLimitDataSharing(shouldLimitDataSharing) {
+        this.limitDataSharing = shouldLimitDataSharing;
         return this;
     }
 }

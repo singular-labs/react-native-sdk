@@ -51,20 +51,20 @@ RCT_EXPORT_MODULE();
 // Init method using a json string representing the config
 RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     NSDictionary* singularConfigDict = [SingularBridge jsonToDictionary:jsonSingularConfig];
-    
+
     apikey = [singularConfigDict objectForKey:@"apikey"];
     secret = [singularConfigDict objectForKey:@"secret"];
-    
+
     // General Fields
     SingularConfig* singularConfig = [[SingularConfig alloc] initWithApiKey:apikey andSecret:secret];
-    
+
     // Singular Links fields
     singularConfig.launchOptions = launchOptions;
     singularConfig.supportedDomains = [singularConfigDict objectForKey:@"supportedDomains"];
     singularConfig.singularLinksHandler = ^(SingularLinkParams * params){
         [SingularBridge handleSingularLink:params];
     };
-    
+
     // Global Properties fields
     NSDictionary* globalProperties = [singularConfigDict objectForKey:@"globalProperties"];
     if (globalProperties && [globalProperties count] > 0){
@@ -74,7 +74,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
                               overrideExisting:[[property objectForKey:@"OverrideExisting"] boolValue]];
         }
     }
-    
+
     // SKAN
     singularConfig.skAdNetworkEnabled = [[singularConfigDict objectForKey:@"skAdNetworkEnabled"] boolValue];
     singularConfig.manualSkanConversionManagement = [[singularConfigDict objectForKey:@"manualSkanConversionManagement"] boolValue];
@@ -83,9 +83,27 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     };
     singularConfig.waitForTrackingAuthorizationWithTimeoutInterval =
         [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
-    
+
+    NSString* customUserId = [singularConfigDict objectForKey:@"customUserId"];
+
+    if (customUserId) {
+        [Singular setCustomUserId:customUserId];
+    }
+
+    NSNumber* limitDataSharing = [singularConfigDict objectForKey:@"limitDataSharing"];
+
+    if (![limitDataSharing isEqual:[NSNull null]]) {
+        [Singular limitDataSharing:[limitDataSharing boolValue]];
+    }
+
+    NSNumber* sessionTimeout = [singularConfigDict objectForKey:@"sessionTimeout"];
+
+    if (sessionTimeout >= 0) {
+        [Singular setSessionTimeout:[sessionTimeout intValue]];
+    }
+
     eventEmitter = self;
-    
+
     [Singular start:singularConfig];
 }
 
@@ -180,17 +198,17 @@ RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
     if(!json){
         return nil;
     }
-    
+
     NSError *jsonError = nil;
     NSData *objectData = [json dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *data = [NSJSONSerialization JSONObjectWithData:objectData
                                                          options:NSJSONReadingMutableContainers
                                                            error:&jsonError];
-    
+
     if(jsonError){
         return nil;
     }
-    
+
     return data;
 }
 
