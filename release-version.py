@@ -48,7 +48,7 @@ def update_docs():
     output, err = run_script("git describe --tags --abbrev=0")
     new_version = output.decode('utf-8').strip()
     os.chdir('sdk-tools/')
-    command = "./update_zendesk_articles.py --platform={0} --old-version={1} --new-version={2}".format(platform, old_version.replace('v', ''), new_version.replace('v', ''))
+    command = "./update_zendesk_articles.py --platform={0} --old-version={1} --new-version={2}".format(platform, old_version, new_version)
     os.system(command)
 
 
