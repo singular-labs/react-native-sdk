@@ -13,8 +13,10 @@
     "Singular.js",
     "SingularConfig.js",
     "SingularPurchase.js",
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
+  "types": "./index.d.ts",
   "devDependencies": {
     "@babel/core": "7.7.4",
     "@babel/runtime": "7.7.4",
