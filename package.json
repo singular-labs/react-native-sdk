@@ -9,6 +9,7 @@
     "android/build.gradle",
     "ios/SingularBridge.h",
     "ios/SingularBridge.m",
+    "ios/SingularReactNative.xcodeproj/project.pbxproj",
     "Singular-React-Native.podspec",
     "Singular.js",
     "SingularConfig.js",
