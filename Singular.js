@@ -5,6 +5,7 @@ const {SingularBridge} = NativeModules;
 
 const SDK_NAME = 'ReactNative';
 const SDK_VERSION = version;
+const ADMON_REVENUE_EVENT_NAME = '__ADMON_USER_LEVEL_REVENUE__';
 
 export class Singular {
 
@@ -138,5 +139,12 @@ export class Singular {
         if (Platform.OS === 'ios') {
             SingularBridge.skanRegisterAppForAdNetworkAttribution();
         }
+    }
+
+    static adRevenue(adData) {
+        if (!adData || !adData.hasRequiredParams()) {
+            return;
+        }
+        this.eventWithArgs(ADMON_REVENUE_EVENT_NAME, adData.getAdDataValues());
     }
 }
