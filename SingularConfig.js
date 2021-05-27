@@ -4,7 +4,7 @@ export class SingularConfig {
     sessionTimeout;
     customUserId;
     singularLinkHandler;
-    shortLinkResolveTimeOut;
+    shortLinkResolveTimeout;
 
     // SKAN
     skAdNetworkEnabled;
@@ -23,7 +23,7 @@ export class SingularConfig {
         this.manualSkanConversionManagement = false;
         this.waitForTrackingAuthorizationWithTimeoutInterval = 0;
         this.limitDataSharing = null;
-        this.shortLinkResolveTimeOut = 10; // default timeout 10s
+        this.shortLinkResolveTimeout = 10; // default timeout 10s
     }
 
     withSessionTimeoutInSec(sessionTimeout) {
@@ -63,6 +63,11 @@ export class SingularConfig {
 
     withLimitDataSharing(shouldLimitDataSharing) {
         this.limitDataSharing = shouldLimitDataSharing;
+        return this;
+    }
+
+    withShortLinkResolveTimeout(shortLinkResolveTimeout) {
+        this.shortLinkResolveTimeout = shortLinkResolveTimeout;
         return this;
     }
 }
