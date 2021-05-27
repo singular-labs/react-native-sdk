@@ -145,6 +145,6 @@ export class Singular {
         if (!adData || !adData.hasRequiredParams()) {
             return;
         }
-        this.eventWithArgs(ADMON_REVENUE_EVENT_NAME, adData.getAdDataValues());
+        this.eventWithArgs(ADMON_REVENUE_EVENT_NAME, adData);
     }
 }
