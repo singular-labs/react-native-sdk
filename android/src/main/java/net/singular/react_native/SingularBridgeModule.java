@@ -179,7 +179,9 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
 
                 if (intentHash != currentIntentHash) {
                     currentIntentHash = intentHash;
-                    config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler);
+
+                    long shortLinkResolveTimeout = configJson.optLong("shortLinkResolveTimeout", 10);
+                    config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler, shortLinkResolveTimeout);
                 }
             }
 
