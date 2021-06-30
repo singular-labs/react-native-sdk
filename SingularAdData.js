@@ -15,6 +15,8 @@ const ADMON_AD_GROUP_PRIORITY = 'ad_group_priority';
 const ADMON_PRECISION = 'ad_precision';
 const ADMON_PLACEMENT_ID = 'ad_placement_id';
 const IS_REVENUE_EVENT_KEY = 'is_revenue_event';
+const REVENUE_AMOUNT_KEY = 'r';
+const REVENUE_CURRENCY_KEY = 'pcc';
 
 const requiredParams = [ADMON_AD_PLATFORM, ADMON_CURRENCY, ADMON_REVENUE];
 
@@ -24,6 +26,8 @@ export class SingularAdData {
         this[ADMON_AD_PLATFORM] = adPlatform;
         this[ADMON_REVENUE] = revenue;
         this[ADMON_CURRENCY] = currency;
+        this[REVENUE_AMOUNT_KEY] = revenue;
+        this[REVENUE_CURRENCY_KEY] = currency;
         this[ADMON_IS_ADMON_REVENUE] = true;
         this[IS_REVENUE_EVENT_KEY] = true;
 
