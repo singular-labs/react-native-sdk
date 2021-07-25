@@ -12,6 +12,7 @@
     "ios/SingularReactNative.xcodeproj/project.pbxproj",
     "Singular-React-Native.podspec",
     "Singular.js",
+    "SingularAdData.js",
     "SingularConfig.js",
     "SingularPurchase.js",
     "index.js",
