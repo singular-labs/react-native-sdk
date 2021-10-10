@@ -57,6 +57,14 @@ def release_react_native_sdk():
 
     download_sdk_tools()
     update_docs()
+    output, err = run_script("git describe --tags --abbrev=0")
+    new_version = output.decode('utf-8').strip()
+    with open(new_version, 'w') as fp:
+        pass
+
+    print('Syncing latest version to s3')
+    s3_location = 's3://maven.singular.net/react-native/{0}'.format(new_version)
+    run_script('s3cmd put {0} {1}'.format(new_version, s3_location))
 
     print('Done!')
 
