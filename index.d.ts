@@ -14,7 +14,7 @@ export class SingularConfig {
     constructor(apikey: string, secret: string);
 
     withSessionTimeoutInSec(sessionTimeout: number): SingularConfig;
-    withCustomUserId(customUserId: number): SingularConfig;
+    withCustomUserId(customUserId: string): SingularConfig;
     withSingularLink(handler: (params: SingularLinkParams) => void): SingularConfig;
 
     withSkAdNetworkEnabled(enabled: boolean): SingularConfig;
