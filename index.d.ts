@@ -1,8 +1,8 @@
 type SerializableValue = boolean | number | string | null | SerializableArray | SerializableObject;
 type SerializableArray = Array<SerializableValue>;
-interface SerializableObject {
-    [key: string | number]: SerializableValue;
-}
+type SerializableObject = {
+    [key in string | number]: SerializableValue;
+};
 
 export interface SingularLinkParams {
     deeplink: string;
