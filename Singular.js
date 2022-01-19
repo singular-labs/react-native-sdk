@@ -147,4 +147,20 @@ export class Singular {
         }
         this.eventWithArgs(ADMON_REVENUE_EVENT_NAME, adData);
     }
+
+    static setGlobalProperty(key, value,overrideExisting) {
+        return SingularBridge.setGlobalProperty(key, value, overrideExisting);
+    }
+
+    static unsetGlobalProperty(key) {
+        SingularBridge.unsetGlobalProperty(key);
+    }
+
+    static clearGlobalProperties() {
+        SingularBridge.clearGlobalProperties();
+    }
+
+    static getGlobalProperties() {
+        return SingularBridge.getGlobalProperties();
+    }
 }
