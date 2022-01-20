@@ -23,6 +23,11 @@ export class SingularConfig {
     withWaitForTrackingAuthorizationWithTimeoutInterval(interval: number): SingularConfig;
 
     withLimitDataSharing(shouldLimitDataSharing: boolean): SingularConfig;
+
+    withGlobalProperty(key: string, value: string, overrideExisting: boolean): SingularConfig;
+    withOAIDCollection(): SingularConfig;
+
+    withLoggingEnabled(): SingularConfig;
 }
 
 export class SingularPurchase {
@@ -67,6 +72,11 @@ export class Singular {
 
     static limitDataSharing(shoudlLimitDataSharing: boolean): void;
     static getLimitDataSharing(): boolean;
+
+    static setGlobalProperty(key: string, value: string, overrideExisting: boolean): boolean;
+    static unsetGlobalProperty(key: string): void;
+    static clearGlobalProperties(): void;
+    static getGlobalProperties(): SerializableObject;
 
     static skanUpdateConversionValue(conversionValue: number): boolean;
     static skanGetConversionValue(): number | null;

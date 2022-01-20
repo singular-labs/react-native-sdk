@@ -143,6 +143,26 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         Singular.setWrapperNameAndVersion(wrapper, version);
     }
 
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public boolean setGlobalProperty(String key, String value, boolean overrideExisting) {
+        return Singular.setGlobalProperty(key,value,overrideExisting);
+    }
+
+    @ReactMethod
+    public void unsetGlobalProperty(String key) {
+        Singular.unsetGlobalProperty(key);
+    }
+
+    @ReactMethod
+    public void clearGlobalProperties() {
+        Singular.clearGlobalProperties();
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public WritableMap getGlobalProperties() {
+        return toWritableMap(Singular.getGlobalProperties());
+    }
+
     private void buildSingularConfig(String configString) {
         try {
             JSONObject configJson = new JSONObject(configString);
@@ -209,6 +229,16 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 config.withLimitDataSharing((boolean)limitDataSharing);
             }
 
+            boolean collectOAID = configJson.optBoolean("collectOAID", false);
+            if (collectOAID) {
+                config.withOAIDCollection();
+            }
+
+            boolean enableLogging = configJson.optBoolean("enableLogging", false);
+            if (enableLogging) {
+                config.withLoggingEnabled();
+            }
+
             JSONObject globalProperties = configJson.optJSONObject("globalProperties");
 
             // Adding all of the global properties to the singular config
@@ -226,6 +256,26 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         } catch (JSONException ignored) {
         }
     }
+
+    private WritableMap toWritableMap(Map<String, String> map) {
+        WritableMap writableMap = Arguments.createMap();
+        Iterator iterator = map.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry pair = (Map.Entry) iterator.next();
+            Object value = pair.getValue();
+
+            if (value == null) {
+                writableMap.putNull((String) pair.getKey());
+            }  else if (value instanceof String) {
+                writableMap.putString((String) pair.getKey(), (String) value);
+            }
+            iterator.remove();
+        }
+
+        return writableMap;
+    }
+
 
     private Map<String, Object> convertJsonToMap(String json) {
         Map<String, Object> args = new HashMap<>();
