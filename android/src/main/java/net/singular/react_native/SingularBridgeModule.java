@@ -143,7 +143,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         Singular.setWrapperNameAndVersion(wrapper, version);
     }
 
-    @ReactMethod()
+    @ReactMethod(isBlockingSynchronousMethod = true)
     public boolean setGlobalProperty(String key, String value, boolean overrideExisting) {
         return Singular.setGlobalProperty(key,value,overrideExisting);
     }
@@ -227,6 +227,16 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
 
             if (limitDataSharing != JSONObject.NULL) {
                 config.withLimitDataSharing((boolean)limitDataSharing);
+            }
+
+            boolean collectOAID = configJson.optBoolean("collectOAID", false);
+            if (collectOAID) {
+                config.withOAIDCollection();
+            }
+
+            boolean enableLogging = configJson.optBoolean("enableLogging", false);
+            if (enableLogging) {
+                config.withLoggingEnabled();
             }
 
             JSONObject globalProperties = configJson.optJSONObject("globalProperties");

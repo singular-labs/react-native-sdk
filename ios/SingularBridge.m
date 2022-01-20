@@ -193,20 +193,20 @@ RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
     [Singular skanRegisterAppForAdNetworkAttribution];
 }
 
-RCT_EXPORT_METHOD(setGlobalProperty:(NSString *)key value:(NSString *)value overrideExisting:(BOOL)overrideExisting) {
-    return SingularBridge.setGlobalProperty(key, value, overrideExisting);
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(setGlobalProperty:(NSString *)key value:(NSString *)value overrideExisting:(BOOL)overrideExisting) {
+    return [Singular setGlobalProperty:key andValue:value overrideExisting:overrideExisting] ? @YES : @NO;
 }
 
 RCT_EXPORT_METHOD(unsetGlobalProperty:(NSString *) key) {
-    SingularBridge.unsetGlobalProperty(key);
+    [Singular unsetGlobalProperty:key];
 }
 
 RCT_EXPORT_METHOD(clearGlobalProperties) {
-    SingularBridge.clearGlobalProperties();
+    [Singular clearGlobalProperties];
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
-    return SingularBridge.getGlobalProperties();
+    return [Singular getGlobalProperties];
 }
 
 #pragma mark - Private methods

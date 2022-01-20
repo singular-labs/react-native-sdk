@@ -25,6 +25,9 @@ export class SingularConfig {
     withLimitDataSharing(shouldLimitDataSharing: boolean): SingularConfig;
 
     withGlobalProperty(key: string, value: string, overrideExisting: boolean): SingularConfig;
+    withOAIDCollection(): SingularConfig;
+
+    withLoggingEnabled(): SingularConfig;
 }
 
 export class SingularPurchase {

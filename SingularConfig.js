@@ -17,6 +17,9 @@ export class SingularConfig {
 
     // Global Properties
     globalProperties;
+    collectOAID
+    enableLogging;
+
 
     constructor(apikey, secret) {
         this.apikey = apikey;
@@ -28,6 +31,8 @@ export class SingularConfig {
         this.limitDataSharing = null;
         this.shortLinkResolveTimeout = 10; // default timeout 10s
         this.globalProperties = {}
+        this.collectOAID = false;
+        this.enableLogging = false;
     }
 
     withSessionTimeoutInSec(sessionTimeout) {
@@ -77,6 +82,16 @@ export class SingularConfig {
 
     withGlobalProperty(key, value,overrideExisting) {
         this.globalProperties[key] = {"Key":key, "Value":value,"OverrideExisting":overrideExisting};
+        return this;
+    }
+
+    withOAIDCollection() {
+        this.collectOAID = true;
+        return this;
+    }
+
+    withLoggingEnabled() {
+        this.enableLogging = true;
         return this;
     }
 }
