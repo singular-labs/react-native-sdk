@@ -50,6 +50,7 @@ def update_docs():
     os.chdir('sdk-tools/')
     command = "./update_zendesk_articles.py --platform={0} --old-version={1} --new-version={2}".format(platform, old_version, new_version)
     os.system(command)
+    os.chdir('..')
 
 
 def release_react_native_sdk():

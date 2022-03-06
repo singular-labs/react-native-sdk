@@ -239,6 +239,11 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 config.withLoggingEnabled();
             }
 
+            int logLevel = configJson.optInt("logLevel", -1);
+            if (logLevel >= 0) {
+                config.withLogLevel(logLevel);
+            }
+
             JSONObject globalProperties = configJson.optJSONObject("globalProperties");
 
             // Adding all of the global properties to the singular config
