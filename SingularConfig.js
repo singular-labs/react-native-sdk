@@ -94,4 +94,9 @@ export class SingularConfig {
         this.enableLogging = true;
         return this;
     }
+
+    withLogLevel(level) {
+        this.logLevel = level;
+        return this;
+    }
 }
