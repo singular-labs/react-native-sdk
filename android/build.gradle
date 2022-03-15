@@ -35,7 +35,10 @@ repositories {
     }
     mavenCentral()
     jcenter()
-    maven { url 'http://maven.singular.net/' }
+    maven { 
+        allowInsecureProtocol = true
+        url 'http://maven.singular.net/'
+    }
     google()
 }
 
