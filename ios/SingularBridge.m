@@ -77,6 +77,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     }
 
     // SKAN
+    singularConfig.clipboardAttribution = [[singularConfigDict objectForKey:@"clipboardAttribution"] boolValue];
     singularConfig.skAdNetworkEnabled = [[singularConfigDict objectForKey:@"skAdNetworkEnabled"] boolValue];
     singularConfig.manualSkanConversionManagement = [[singularConfigDict objectForKey:@"manualSkanConversionManagement"] boolValue];
     singularConfig.conversionValueUpdatedCallback = ^(NSInteger conversionValue) {

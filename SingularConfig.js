@@ -8,6 +8,7 @@ export class SingularConfig {
 
     // SKAN
     skAdNetworkEnabled;
+    clipboardAttribution;
     manualSkanConversionManagement;
     conversionValueUpdatedHandler;
     waitForTrackingAuthorizationWithTimeoutInterval;
@@ -33,10 +34,16 @@ export class SingularConfig {
         this.globalProperties = {}
         this.collectOAID = false;
         this.enableLogging = false;
+        this.clipboardAttribution = false;
     }
 
     withSessionTimeoutInSec(sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
+        return this;
+    }
+
+    withClipboardAttribution() {
+        this.clipboardAttribution = true;
         return this;
     }
 
