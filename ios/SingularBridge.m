@@ -60,6 +60,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
 
     // Singular Links fields
     singularConfig.launchOptions = launchOptions;
+    singularConfig.clipboardAttribution = [singularConfigDict objectForKey:@"clipboardAttribution"];
     singularConfig.supportedDomains = [singularConfigDict objectForKey:@"supportedDomains"];
     singularConfig.shortLinkResolveTimeOut = [[singularConfigDict objectForKey:@"shortLinkResolveTimeout"] longValue];
     singularConfig.singularLinksHandler = ^(SingularLinkParams * params){
@@ -230,6 +231,10 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
     return data;
 }
 
+
+
+
+
 +(void)handleSingularLink:(SingularLinkParams*)params {
     // Raising the Singular Link handler in the react-native code
     [eventEmitter sendEventWithName:@"SingularLinkHandler" body:@{
@@ -237,7 +242,11 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
         @"passthrough": [params getPassthrough] ? [params getPassthrough] : @"",
         @"isDeferred": [params isDeferred] ? @YES : @NO
     }];
+
 }
+
+
+
 
 +(void)handleConversionValueUpdated:(NSInteger)conversionValue {
     // Raising the Conversion Value handler in the react-native code
