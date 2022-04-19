@@ -18,6 +18,7 @@ export class SingularConfig {
     withSingularLink(handler: (params: SingularLinkParams) => void): SingularConfig;
 
     withSkAdNetworkEnabled(enabled: boolean): SingularConfig;
+    withClipboardAttribution(): SingularConfig;
     withManualSkanConversionManagement(): SingularConfig;
     withConversionValueUpdatedHandler(handler: (value: number) => void): SingularConfig;
     withWaitForTrackingAuthorizationWithTimeoutInterval(interval: number): SingularConfig;

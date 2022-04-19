@@ -77,6 +77,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     }
 
     // SKAN
+    singularConfig.clipboardAttribution = [[singularConfigDict objectForKey:@"clipboardAttribution"] boolValue];
     singularConfig.skAdNetworkEnabled = [[singularConfigDict objectForKey:@"skAdNetworkEnabled"] boolValue];
     singularConfig.manualSkanConversionManagement = [[singularConfigDict objectForKey:@"manualSkanConversionManagement"] boolValue];
     singularConfig.conversionValueUpdatedCallback = ^(NSInteger conversionValue) {
@@ -229,6 +230,10 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
     return data;
 }
 
+
+
+
+
 +(void)handleSingularLink:(SingularLinkParams*)params {
     // Raising the Singular Link handler in the react-native code
     [eventEmitter sendEventWithName:@"SingularLinkHandler" body:@{
@@ -236,7 +241,11 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
         @"passthrough": [params getPassthrough] ? [params getPassthrough] : @"",
         @"isDeferred": [params isDeferred] ? @YES : @NO
     }];
+
 }
+
+
+
 
 +(void)handleConversionValueUpdated:(NSInteger)conversionValue {
     // Raising the Conversion Value handler in the react-native code
