@@ -35,7 +35,7 @@ repositories {
     }
     mavenCentral()
     jcenter()
-    maven { url 'http://maven.singular.net/' }
+    maven { url 'https://maven.singular.net/' }
     google()
 }
 
