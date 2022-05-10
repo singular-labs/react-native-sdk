@@ -38,7 +38,7 @@ repositories {
     maven { url 'https://maven.singular.net/' }
     google()
     flatDir{
-        dirs project(':singular_flutter_sdk').file('libs')
+        dirs project(':singular-react-native').file('libs')
     }
 }
 
