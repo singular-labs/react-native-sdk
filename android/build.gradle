@@ -37,6 +37,9 @@ repositories {
     jcenter()
     maven { url 'https://maven.singular.net/' }
     google()
+    flatDir{
+        dirs project(':singular_flutter_sdk').file('libs')
+    }
 }
 
 dependencies {
