@@ -42,6 +42,17 @@ repositories {
     }
 }
 
+rootProject.allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://maven.singular.net/' }
+        flatDir{
+            dirs project(':singular-react-native').file('libs')
+        }
+    }
+}
+
 dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'com.singular.sdk:singular_sdk:12.0.5'
