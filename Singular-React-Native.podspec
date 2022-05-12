@@ -12,6 +12,6 @@ Pod::Spec.new do |spec|
   spec.source_files      = "ios/*.{h,m}"
   spec.platform         = :ios, "8.0"
   spec.static_framework = true
-  spec.dependency 'Singular-SDK'
+spec.dependency 'Singular-SDK' , :path =>../../tmp_repo_dir/Singular-iOS-SDK/Singular-SDK.podspec
   spec.dependency 'React'
 end
