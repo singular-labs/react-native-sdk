@@ -18,6 +18,7 @@ import com.singular.sdk.Singular;
 import com.singular.sdk.SingularConfig;
 import com.singular.sdk.SingularLinkHandler;
 import com.singular.sdk.SingularLinkParams;
+import com.singular.sdk.ShortLinkHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -316,5 +317,50 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             config.withSingularLink(intent, singularLinkHandler);
             Singular.init(reactContext, config);
         }
+    }
+
+
+
+    @ReactMethod
+    public void createReferrerShortLink(String baseLink,
+                                        String referrerName,
+                                        String referrerId,
+                                        String args){
+
+        JSONObject params = null;
+        try{
+            params = new JSONObject(args);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        Singular.createReferrerShortLink(baseLink,
+                referrerName,
+                referrerId,
+                params,
+                new ShortLinkHandler() {
+                    @Override
+                    public void onSuccess(final String link) {
+                        WritableMap params = Arguments.createMap();
+                        params.putString("data", link);
+                        params.putString("error", "");
+                        reactContext.
+                                getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                                .emit("ShortLinkHandler", params);
+
+                    }
+
+                    @Override
+                    public void onError(final String error) {
+                        WritableMap params = Arguments.createMap();
+                        params.putString("data", "");
+                        params.putString("error", error);
+                        reactContext.
+                                getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                                .emit("ShortLinkHandler", params);
+                    }
+                });
+
+
     }
 }

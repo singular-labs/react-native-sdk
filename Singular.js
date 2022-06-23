@@ -35,6 +35,22 @@ export class Singular {
         SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
     }
 
+    static createReferrerShortLink(baseLink, referrerName, referrerId, passthroughParams, completionHandler){
+        let eventSubscription = this._singularNativeEmitter.addListener(
+            'ShortLinkHandler',
+            (res) => {
+                eventSubscription.remove();
+                if (completionHandler) {
+                    completionHandler(res.data, res.error && res.error.length ? res.error: undefined);
+                }
+            });
+        SingularBridge.createReferrerShortLink(baseLink, referrerName, referrerId, JSON.stringify(passthroughParams));
+
+
+    } 
+
+
+
     static setCustomUserId(customUserId) {
         SingularBridge.setCustomUserId(customUserId);
     }

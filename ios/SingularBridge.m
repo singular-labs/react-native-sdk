@@ -42,10 +42,14 @@ static RCTEventEmitter* eventEmitter;
     }];
 }
 
+
+
+
+
 RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[@"SingularLinkHandler", @"ConversionValueUpdatedHandler"];
+    return @[@"SingularLinkHandler", @"ConversionValueUpdatedHandler", @"ShortLinkHandler"];
 }
 
 // Init method using a json string representing the config
@@ -108,6 +112,24 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
 
     [Singular start:singularConfig];
 }
+
+
+RCT_EXPORT_METHOD(createReferrerShortLink:(NSString *)baseLink
+                   referrerName:(NSString *)referrerName
+                     referrerId:(NSString *)referrerId
+              passthroughParams:(NSString *)args){
+    [Singular createReferrerShortLink:baseLink
+                         referrerName:referrerName
+                           referrerId:referrerId
+                    passthroughParams:[SingularBridge jsonToDictionary:args]
+                    completionHandler:^(NSString *data, NSError *error) {
+                            [eventEmitter sendEventWithName:@"ShortLinkHandler" body:@{
+                                @"data": data? data: @"",
+                                @"error": error ? error: @""
+                            }];
+    }];
+}
+
 
 RCT_EXPORT_METHOD(setCustomUserId:(NSString*)customUserId){
     [Singular setCustomUserId:customUserId];
