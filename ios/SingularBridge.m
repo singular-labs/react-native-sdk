@@ -114,6 +114,8 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
 }
 
 
+
+
 RCT_EXPORT_METHOD(createReferrerShortLink:(NSString *)baseLink
                    referrerName:(NSString *)referrerName
                      referrerId:(NSString *)referrerId
@@ -125,7 +127,7 @@ RCT_EXPORT_METHOD(createReferrerShortLink:(NSString *)baseLink
                     completionHandler:^(NSString *data, NSError *error) {
                             [eventEmitter sendEventWithName:@"ShortLinkHandler" body:@{
                                 @"data": data? data: @"",
-                                @"error": error ? error: @""
+                                @"error": error ? error.description: @""
                             }];
     }];
 }
