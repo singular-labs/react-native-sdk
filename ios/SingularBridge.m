@@ -42,10 +42,6 @@ static RCTEventEmitter* eventEmitter;
     }];
 }
 
-
-
-
-
 RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
@@ -113,13 +109,10 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     [Singular start:singularConfig];
 }
 
-
-
-
 RCT_EXPORT_METHOD(createReferrerShortLink:(NSString *)baseLink
-                   referrerName:(NSString *)referrerName
-                     referrerId:(NSString *)referrerId
-              passthroughParams:(NSString *)args){
+                  referrerName:(NSString *)referrerName
+                  referrerId:(NSString *)referrerId
+                  passthroughParams:(NSString *)args){
     [Singular createReferrerShortLink:baseLink
                          referrerName:referrerName
                            referrerId:referrerId
@@ -131,7 +124,6 @@ RCT_EXPORT_METHOD(createReferrerShortLink:(NSString *)baseLink
                             }];
     }];
 }
-
 
 RCT_EXPORT_METHOD(setCustomUserId:(NSString*)customUserId){
     [Singular setCustomUserId:customUserId];

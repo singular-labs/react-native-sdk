@@ -45,11 +45,7 @@ export class Singular {
                 }
             });
         SingularBridge.createReferrerShortLink(baseLink, referrerName, referrerId, JSON.stringify(passthroughParams));
-
-
     } 
-
-
 
     static setCustomUserId(customUserId) {
         SingularBridge.setCustomUserId(customUserId);
