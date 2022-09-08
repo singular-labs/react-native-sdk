@@ -12,5 +12,14 @@ export const Events = {
 	sngSubmitApplication:"sng_submit_application",
 	sngUpdate:"sng_update",
 	sngEcommercePurchase:"sng_ecommerce_purchase",
-	sngViewCart:"sng_view_cart"
+	sngViewCart:"sng_view_cart",
+	sngAchievementUnlocked:"sng_achievement_unlocked",
+	sngAddPaymentInfo:"sng_add_payment_info",
+	sngAddToCart:"sng_add_to_cart",
+	sngAddToWishlist:"sng_add_to_wishlist",
+	sngCheckoutInitiated:"sng_checkout_initiated",
+	sngCompleteRegistration:"sng_complete_registration",
+	sngContentView:"sng_content_view",
+	sngLevelAchieved:"sng_level_achieved",
+	sngSearch:"sng_search"
 }
