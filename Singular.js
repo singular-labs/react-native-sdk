@@ -147,6 +147,12 @@ export class Singular {
         }
         return true
     }
+    
+    static skanUpdateConversionValue(conversionValue, coarse, lock) {
+        if (Platform.OS === 'ios') {
+            SingularBridge.skanUpdateConversionValue(conversionValue, coarse, lock);
+        }
+    }
 
     static skanGetConversionValue() {
         if (Platform.OS === 'ios') {
