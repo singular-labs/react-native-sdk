@@ -31,6 +31,14 @@ export class Singular {
                 }
             });
 
+        this._singularNativeEmitter.addListener(
+            'ConversionValuesUpdatedHandler',
+            (fineValue, coarseValue, lockWindow) => {
+                if (this._conversionValuesUpdatedHandler) {
+                    this._conversionValuesUpdatedHandler(fineValue, coarseValue, lockWindow);
+                }
+            });
+
         SingularBridge.init(JSON.stringify(singularConfig));
         SingularBridge.setReactSDKVersion(SDK_NAME, SDK_VERSION);
     }
