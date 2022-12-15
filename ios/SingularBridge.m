@@ -270,7 +270,6 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
 }
 
 +(void)handleConversionValuesUpdated:(NSNumber *)fineValue andCoarseValue:(NSNumber *)coarseValue andLockWindow:(BOOL)lockWindow {
-    
     NSInteger fine = -1;
     NSInteger coarse = -1;
     
@@ -280,8 +279,12 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
     if (coarseValue != nil) {
         coarse = [coarseValue intValue];
     }
-    // Raising the Conversion Value handler in the react-native code
-    [eventEmitter sendEventWithName:@"ConversionValuesUpdatedHandler" body:@[@(fine),@(coarse),@(lockWindow)]];
+
+    [eventEmitter sendEventWithName:@"ConversionValuesUpdatedHandler" body:@{
+        @"conversionValue": @(fine),
+        @"coarse": @(coarse),
+        @"lock": @(lockWindow)
+    }];
 }
 
 @end

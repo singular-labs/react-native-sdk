@@ -14,7 +14,8 @@ export class Singular {
     static init(singularConfig) {
         this._singularLinkHandler = singularConfig.singularLinkHandler;
         this._conversionValueUpdatedHandler = singularConfig.conversionValueUpdatedHandler;
-
+        this._conversionValuesUpdatedHandler = singularConfig.conversionValuesUpdatedHandler;
+        
         this._singularNativeEmitter.addListener(
             'SingularLinkHandler',
             singularLinkParams => {
@@ -33,9 +34,9 @@ export class Singular {
 
         this._singularNativeEmitter.addListener(
             'ConversionValuesUpdatedHandler',
-            (fineValue, coarseValue, lockWindow) => {
+            updatedConversionValues => {
                 if (this._conversionValuesUpdatedHandler) {
-                    this._conversionValuesUpdatedHandler(fineValue, coarseValue, lockWindow);
+                    this._conversionValuesUpdatedHandler(updatedConversionValues);
                 }
             });
 
