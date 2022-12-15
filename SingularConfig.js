@@ -11,6 +11,7 @@ export class SingularConfig {
     clipboardAttribution;
     manualSkanConversionManagement;
     conversionValueUpdatedHandler;
+    conversionValuesUpdatedHandler;
     waitForTrackingAuthorizationWithTimeoutInterval;
 
     // Limit Data Sharing
@@ -72,6 +73,11 @@ export class SingularConfig {
         return this;
     }
 
+    withConversionValuesUpdatedHandler(conversionValuesUpdatedHandler) {
+        this.conversionValuesUpdatedHandler = conversionValuesUpdatedHandler;
+        return this;
+    }
+    
     withWaitForTrackingAuthorizationWithTimeoutInterval(waitForTrackingAuthorizationWithTimeoutInterval) {
         this.waitForTrackingAuthorizationWithTimeoutInterval = waitForTrackingAuthorizationWithTimeoutInterval;
         return this;

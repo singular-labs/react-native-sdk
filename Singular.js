@@ -14,7 +14,8 @@ export class Singular {
     static init(singularConfig) {
         this._singularLinkHandler = singularConfig.singularLinkHandler;
         this._conversionValueUpdatedHandler = singularConfig.conversionValueUpdatedHandler;
-
+        this._conversionValuesUpdatedHandler = singularConfig.conversionValuesUpdatedHandler;
+        
         this._singularNativeEmitter.addListener(
             'SingularLinkHandler',
             singularLinkParams => {
@@ -28,6 +29,14 @@ export class Singular {
             conversionValue => {
                 if (this._conversionValueUpdatedHandler) {
                     this._conversionValueUpdatedHandler(conversionValue);
+                }
+            });
+
+        this._singularNativeEmitter.addListener(
+            'ConversionValuesUpdatedHandler',
+            updatedConversionValues => {
+                if (this._conversionValuesUpdatedHandler) {
+                    this._conversionValuesUpdatedHandler(updatedConversionValues);
                 }
             });
 
@@ -138,6 +147,12 @@ export class Singular {
             return SingularBridge.skanUpdateConversionValue(conversionValue);
         }
         return true
+    }
+    
+    static skanUpdateConversionValue(conversionValue, coarse, lock) {
+        if (Platform.OS === 'ios') {
+            SingularBridge.skanUpdateConversionValue(conversionValue, coarse, lock);
+        }
     }
 
     static skanGetConversionValue() {

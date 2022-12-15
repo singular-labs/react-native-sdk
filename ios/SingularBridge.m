@@ -45,7 +45,7 @@ static RCTEventEmitter* eventEmitter;
 RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[@"SingularLinkHandler", @"ConversionValueUpdatedHandler", @"ShortLinkHandler"];
+    return @[@"SingularLinkHandler", @"ConversionValueUpdatedHandler", @"ShortLinkHandler", @"ConversionValuesUpdatedHandler"];
 }
 
 // Init method using a json string representing the config
@@ -83,6 +83,10 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     singularConfig.conversionValueUpdatedCallback = ^(NSInteger conversionValue) {
         [SingularBridge handleConversionValueUpdated:conversionValue];
     };
+    singularConfig.conversionValuesUpdatedCallback = ^(NSNumber *fineValue, NSNumber *coarseValue, BOOL lockWindow) {
+        [SingularBridge handleConversionValuesUpdated:fineValue andCoarseValue:coarseValue andLockWindow:lockWindow];
+    };
+    
     singularConfig.waitForTrackingAuthorizationWithTimeoutInterval =
         [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
 
@@ -202,6 +206,10 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanUpdateConversionValue:(NSInteger)conv
     return [Singular skanUpdateConversionValue:conversionValue] ? @YES : @NO;
 }
 
+RCT_EXPORT_METHOD(skanUpdateConversionValue:(NSInteger)conversionValue coarse:(NSInteger)coarse lock:(BOOL)lock){
+    [Singular skanUpdateConversionValue:conversionValue coarse:coarse lock:lock];
+}
+
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanGetConversionValue){
     return [Singular skanGetConversionValue];
 }
@@ -246,10 +254,6 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
     return data;
 }
 
-
-
-
-
 +(void)handleSingularLink:(SingularLinkParams*)params {
     // Raising the Singular Link handler in the react-native code
     [eventEmitter sendEventWithName:@"SingularLinkHandler" body:@{
@@ -260,12 +264,27 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
 
 }
 
-
-
-
 +(void)handleConversionValueUpdated:(NSInteger)conversionValue {
     // Raising the Conversion Value handler in the react-native code
     [eventEmitter sendEventWithName:@"ConversionValueUpdatedHandler" body:@(conversionValue)];
+}
+
++(void)handleConversionValuesUpdated:(NSNumber *)fineValue andCoarseValue:(NSNumber *)coarseValue andLockWindow:(BOOL)lockWindow {
+    NSInteger fine = -1;
+    NSInteger coarse = -1;
+    
+    if (fineValue != nil) {
+        fine = [fineValue intValue];
+    }
+    if (coarseValue != nil) {
+        coarse = [coarseValue intValue];
+    }
+
+    [eventEmitter sendEventWithName:@"ConversionValuesUpdatedHandler" body:@{
+        @"conversionValue": @(fine),
+        @"coarse": @(coarse),
+        @"lock": @(lockWindow)
+    }];
 }
 
 @end
