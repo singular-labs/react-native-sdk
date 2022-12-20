@@ -206,7 +206,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanUpdateConversionValue:(NSInteger)conv
     return [Singular skanUpdateConversionValue:conversionValue] ? @YES : @NO;
 }
 
-RCT_EXPORT_METHOD(skanUpdateConversionValue:(NSInteger)conversionValue coarse:(NSInteger)coarse lock:(BOOL)lock){
+RCT_EXPORT_METHOD(skanUpdateConversionValues:(NSInteger)conversionValue coarse:(NSInteger)coarse lock:(BOOL)lock){
     [Singular skanUpdateConversionValue:conversionValue coarse:coarse lock:lock];
 }
 

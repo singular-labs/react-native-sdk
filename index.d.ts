@@ -80,6 +80,7 @@ export class Singular {
     static getGlobalProperties(): SerializableObject;
 
     static skanUpdateConversionValue(conversionValue: number): boolean;
+    static skanUpdateConversionValues(conversionValue: number, coarse: number, lock: boolean): void;
     static skanGetConversionValue(): number | null;
     static skanRegisterAppForAdNetworkAttribution(): void;
 }
