@@ -41,6 +41,6 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.singular.sdk:singular_sdk:12.1.0'
+    implementation 'com.singular.sdk:singular_sdk:12.1.1'
     implementation 'com.android.support:support-annotations:28.0.0'
 }
