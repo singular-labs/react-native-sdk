@@ -18,6 +18,7 @@
     "Attributes.js",
     "Events.js",
     "index.js",
+    "app.plugin.js",
     "index.d.ts"
   ],
   "types": "./index.d.ts",
