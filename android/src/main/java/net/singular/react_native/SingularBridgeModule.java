@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -172,6 +173,20 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             String secret = configJson.optString("secret", null);
 
             config = new SingularConfig(apikey, secret);
+
+            JSONArray espDomains = configJson.optJSONArray("espDomains");
+
+            if (espDomains != null && espDomains.length() >0){
+                List<String> domainsList = new LinkedList<>();
+                for (int i = 0 ; i < espDomains.length() ; i++){
+                    String domain = espDomains.getString(i);
+                    if (domain != null && domain.length() >0){
+                        domainsList.add(domain);
+                    }
+                }
+                config.withESPDomains(domainsList);
+
+            }
 
             long ddlTimeoutSec = configJson.optLong("ddlTimeoutSec", 0);
 
