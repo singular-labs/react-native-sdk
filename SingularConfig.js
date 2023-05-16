@@ -21,6 +21,7 @@ export class SingularConfig {
     globalProperties;
     collectOAID
     enableLogging;
+    espDomains;
 
 
     constructor(apikey, secret) {
@@ -111,5 +112,9 @@ export class SingularConfig {
     withLogLevel(level) {
         this.logLevel = level;
         return this;
+    }
+
+    withEspDomains(domains) {
+        this.espDomains = domains;
     }
 }
