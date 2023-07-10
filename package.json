@@ -1,6 +1,6 @@
 {
   "name": "singular-react-native",
-  "version": "3.1.18",
+  "version": "3.1.19",
   "peerDependencies": {
     "react-native": ">=0.46.4"
   },
@@ -30,5 +30,4 @@
     "react-native": "0.61.5",
     "react": "16.9.0"
   }
-
 }
