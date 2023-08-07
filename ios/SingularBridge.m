@@ -260,7 +260,8 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
     [eventEmitter sendEventWithName:@"SingularLinkHandler" body:@{
         @"deeplink": [params getDeepLink] ? [params getDeepLink] : @"",
         @"passthrough": [params getPassthrough] ? [params getPassthrough] : @"",
-        @"isDeferred": [params isDeferred] ? @YES : @NO
+        @"isDeferred": [params isDeferred] ? @YES : @NO,
+        @"urlParameters": [params getUrlParameters] ? [params getUrlParameters] : @{ }
     }];
 
 }
