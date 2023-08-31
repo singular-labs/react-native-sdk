@@ -40,6 +40,6 @@ target 'SingularReactNative' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
   pod 'boost-for-react-native', :podspec => 'https://raw.githubusercontent.com/react-native-community/boost-for-react-native/master/boost-for-react-native.podspec'
   
-  pod 'Singular-SDK', '12.0.7'
+  pod 'Singular-SDK', '12.1.0'
   
 end
