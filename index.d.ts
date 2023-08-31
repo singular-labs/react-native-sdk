@@ -8,6 +8,7 @@ export interface SingularLinkParams {
     deeplink: string;
     passthrough: string;
     isDeferred: boolean;
+    urlParameters: Map<string, string>;
 }
 
 export class SingularConfig {

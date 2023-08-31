@@ -202,6 +202,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                     params.putString("deeplink", singularLinkParams.getDeeplink());
                     params.putString("passthrough", singularLinkParams.getPassthrough());
                     params.putBoolean("isDeferred", singularLinkParams.isDeferred());
+                    params.put("urlParameters", singularLinkParams.getUrlParameters());
 
                     // Raising the Singular Link handler in the react-native code
                     reactContext.
