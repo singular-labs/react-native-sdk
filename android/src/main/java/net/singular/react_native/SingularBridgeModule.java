@@ -175,7 +175,6 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             config = new SingularConfig(apikey, secret);
 
             JSONArray espDomains = configJson.optJSONArray("espDomains");
-
             if (espDomains != null && espDomains.length() >0){
                 List<String> domainsList = new LinkedList<>();
                 for (int i = 0 ; i < espDomains.length() ; i++){
@@ -185,11 +184,9 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                     }
                 }
                 config.withESPDomains(domainsList);
-
             }
 
             long ddlTimeoutSec = configJson.optLong("ddlTimeoutSec", 0);
-
             if (ddlTimeoutSec > 0) {
                 config.withDDLTimeoutInSec(ddlTimeoutSec);
             }
@@ -197,14 +194,12 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             singularLinkHandler = new SingularLinkHandler() {
                 @Override
                 public void onResolved(SingularLinkParams singularLinkParams) {
-
                     WritableMap params = Arguments.createMap();
                     params.putString("deeplink", singularLinkParams.getDeeplink());
                     params.putString("passthrough", singularLinkParams.getPassthrough());
                     params.putBoolean("isDeferred", singularLinkParams.isDeferred());
 
                     WritableMap urlParams = Arguments.createMap();
-
                     if (singularLinkParams.getUrlParameters() != null) {
                         for (Map.Entry<String,String> entry : singularLinkParams.getUrlParameters().entrySet()) {
                             urlParams.putString(entry.getKey(), entry.getValue());
@@ -232,25 +227,21 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             }
 
             String customUserId = configJson.optString("customUserId", null);
-
             if (customUserId != null) {
                 config.withCustomUserId(customUserId);
             }
 
             String imei = configJson.optString("imei", null);
-
             if (imei != null) {
                 config.withIMEI(imei);
             }
 
             int sessionTimeout = configJson.optInt("sessionTimeout", -1);
-
             if (sessionTimeout >= 0) {
                 config.withSessionTimeoutInSec(sessionTimeout);
             }
 
             Object limitDataSharing = configJson.opt("limitDataSharing");
-
             if (limitDataSharing != JSONObject.NULL) {
                 config.withLimitDataSharing((boolean)limitDataSharing);
             }
@@ -270,8 +261,12 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 config.withLogLevel(logLevel);
             }
 
-            JSONObject globalProperties = configJson.optJSONObject("globalProperties");
+            String facebookAppId = configJson.optString("facebookAppId", null);
+            if (facebookAppId != null) {
+                config.withFacebookAppId(facebookAppId);
+            }
 
+            JSONObject globalProperties = configJson.optJSONObject("globalProperties");
             // Adding all of the global properties to the singular config
             if (globalProperties != null) {
                 Iterator<String> iter = globalProperties.keys();

@@ -22,6 +22,7 @@ export class SingularConfig {
     collectOAID
     enableLogging;
     espDomains;
+    facebookAppId;
 
 
     constructor(apikey, secret) {
@@ -116,5 +117,11 @@ export class SingularConfig {
 
     withEspDomains(domains) {
         this.espDomains = domains;
+        return this;
+    }
+
+    withFacebookAppId(appId) {
+        this.facebookAppId = appId;
+        return this;
     }
 }

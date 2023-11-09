@@ -13,23 +13,21 @@ export interface SingularLinkParams {
 
 export class SingularConfig {
     constructor(apikey: string, secret: string);
-
+    
     withSessionTimeoutInSec(sessionTimeout: number): SingularConfig;
     withCustomUserId(customUserId: string): SingularConfig;
     withSingularLink(handler: (params: SingularLinkParams) => void): SingularConfig;
-
     withSkAdNetworkEnabled(enabled: boolean): SingularConfig;
     withClipboardAttribution(): SingularConfig;
     withManualSkanConversionManagement(): SingularConfig;
     withConversionValueUpdatedHandler(handler: (value: number) => void): SingularConfig;
     withWaitForTrackingAuthorizationWithTimeoutInterval(interval: number): SingularConfig;
-
     withLimitDataSharing(shouldLimitDataSharing: boolean): SingularConfig;
-
     withGlobalProperty(key: string, value: string, overrideExisting: boolean): SingularConfig;
     withOAIDCollection(): SingularConfig;
-
     withLoggingEnabled(): SingularConfig;
+    withEspDomains(domains: [string]) : SingularConfig;
+    withFacebookAppId(appId: string): SingularConfig;
 }
 
 export class SingularPurchase {
