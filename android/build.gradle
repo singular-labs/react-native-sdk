@@ -37,6 +37,20 @@ repositories {
     jcenter()
     maven { url 'https://maven.singular.net/' }
     google()
+    flatDir{
+        dirs project(':singular-react-native').file('libs')
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://maven.singular.net/' }
+        flatDir{
+            dirs project(':singular-react-native').file('libs')
+        }
+    }
 }
 
 dependencies {
