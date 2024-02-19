@@ -353,9 +353,9 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
 }
 
 + (BOOL)isValidNonEmptyString:(NSString *)nullableJavascriptString {
-    return nullableJavascriptString
-    && ![customSdid isEqual:[NSNull null]]
-    && [nullableJavascriptString isMemberOfClass:NSString.class]
+    return nullableJavascriptString != nil
+    && ![nullableJavascriptString isEqual:[NSNull null]]
+    && [nullableJavascriptString isKindOfClass:NSString.class]
     && nullableJavascriptString.length > 0
     && ![nullableJavascriptString.lowercaseString isEqualToString:@"null"]
     && ![nullableJavascriptString.lowercaseString isEqualToString:@"undefined"]

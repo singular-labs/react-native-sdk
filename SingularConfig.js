@@ -136,7 +136,7 @@ export class SingularConfig {
         return this;
     }
 
-    withSdid(customSdid, didSetSdidCallback, sdidReceivedCallback) {
+    withCustomSdid(customSdid, didSetSdidCallback, sdidReceivedCallback) {
         this.customSdid = customSdid;
         this.didSetSdidCallback = didSetSdidCallback;
         this.sdidReceivedCallback = sdidReceivedCallback;
