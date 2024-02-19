@@ -17,6 +17,14 @@
 #import “RCTEventDispatcher.h”
 #endif
 
+#define SINGULAR_LINK_HANDLER_CONST                 @"SingularLinkHandler"
+#define CONVERSION_VALUE_UPDATED_HANDLER_CONST      @"ConversionValueUpdatedHandler"
+#define DEVICE_ATTRIBUTION_CALLBACK_HANDLER_CONST   @"DeviceAttributionCallbackHandler"
+#define CONVERSION_VALUES_UPDATED_HANDLER_CONST     @"ConversionValuesUpdatedHandler"
+#define SHORT_LINK_HANDLER_CONST                    @"ShortLinkHandler"
+#define SDID_RECEIVED_CALLBACK_CONST                @"SdidReceivedCallback"
+#define SDID_SET_CALLBACK_CONST                     @"DidSetSdidCallback"
+
 @implementation SingularBridge
 @synthesize bridge = _bridge;
 
@@ -45,7 +53,13 @@ static RCTEventEmitter* eventEmitter;
 RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[@"SingularLinkHandler", @"ConversionValueUpdatedHandler", @"ShortLinkHandler", @"ConversionValuesUpdatedHandler"];
+    return @[SINGULAR_LINK_HANDLER_CONST,
+             CONVERSION_VALUE_UPDATED_HANDLER_CONST,
+             SHORT_LINK_HANDLER_CONST,
+             CONVERSION_VALUES_UPDATED_HANDLER_CONST,
+             DEVICE_ATTRIBUTION_CALLBACK_HANDLER_CONST,
+             SDID_RECEIVED_CALLBACK_CONST,
+             SDID_SET_CALLBACK_CONST];
 }
 
 // Init method using a json string representing the config
@@ -91,6 +105,10 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     singularConfig.waitForTrackingAuthorizationWithTimeoutInterval =
         [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
 
+    singularConfig.deviceAttributionCallback = ^(NSDictionary *deviceAttributionData) {
+        [SingularBridge handleDeviceAttributionData:deviceAttributionData];
+    };
+    
     NSString* customUserId = [singularConfigDict objectForKey:@"customUserId"];
 
     if (customUserId) {
@@ -109,6 +127,21 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
         [Singular setSessionTimeout:[sessionTimeout intValue]];
     }
 
+    NSString *customSdid = [singularConfigDict objectForKey:@"customSdid"];
+    if (![SingularBridge isValidNonEmptyString:customSdid]) {
+        customSdid = nil;
+    }
+    
+    singularConfig.customSdid = customSdid;
+
+    singularConfig.sdidReceivedHandler = ^(NSString *result) {
+        [eventEmitter sendEventWithName:SDID_RECEIVED_CALLBACK_CONST body:result];
+    };
+
+    singularConfig.didSetSdidHandler = ^(NSString *result) {
+        [eventEmitter sendEventWithName:SDID_SET_CALLBACK_CONST body:result];
+    };
+
     eventEmitter = self;
 
     [Singular start:singularConfig];
@@ -123,7 +156,7 @@ RCT_EXPORT_METHOD(createReferrerShortLink:(NSString *)baseLink
                            referrerId:referrerId
                     passthroughParams:[SingularBridge jsonToDictionary:args]
                     completionHandler:^(NSString *data, NSError *error) {
-                            [eventEmitter sendEventWithName:@"ShortLinkHandler" body:@{
+                            [eventEmitter sendEventWithName:SHORT_LINK_HANDLER_CONST body:@{
                                 @"data": data? data: @"",
                                 @"error": error ? error.description: @""
                             }];
@@ -167,7 +200,10 @@ RCT_EXPORT_METHOD(customRevenueWithArgs:(NSString*)eventName currency:(NSString*
 }
 
 RCT_EXPORT_METHOD(setUninstallToken:(NSString*)token){
-    [Singular registerDeviceTokenForUninstall:[token dataUsingEncoding:NSUTF8StringEncoding]];
+    NSData *tokenData = [SingularBridge convertHexStringToDataBytes:token];
+    if (tokenData) {
+        [Singular registerDeviceTokenForUninstall:tokenData];
+    }
 }
 
 RCT_EXPORT_METHOD(trackingOptIn){
@@ -257,7 +293,7 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
 
 +(void)handleSingularLink:(SingularLinkParams*)params {
     // Raising the Singular Link handler in the react-native code
-    [eventEmitter sendEventWithName:@"SingularLinkHandler" body:@{
+    [eventEmitter sendEventWithName:SINGULAR_LINK_HANDLER_CONST body:@{
         @"deeplink": [params getDeepLink] ? [params getDeepLink] : @"",
         @"passthrough": [params getPassthrough] ? [params getPassthrough] : @"",
         @"isDeferred": [params isDeferred] ? @YES : @NO,
@@ -268,7 +304,12 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
 
 +(void)handleConversionValueUpdated:(NSInteger)conversionValue {
     // Raising the Conversion Value handler in the react-native code
-    [eventEmitter sendEventWithName:@"ConversionValueUpdatedHandler" body:@(conversionValue)];
+    [eventEmitter sendEventWithName:CONVERSION_VALUE_UPDATED_HANDLER_CONST body:@(conversionValue)];
+}
+
++(void)handleDeviceAttributionData:(NSDictionary *)attributionData {
+    // Raising the Device attribution handler in the react-native code
+    [eventEmitter sendEventWithName:DEVICE_ATTRIBUTION_CALLBACK_HANDLER_CONST body:attributionData];
 }
 
 +(void)handleConversionValuesUpdated:(NSNumber *)fineValue andCoarseValue:(NSNumber *)coarseValue andLockWindow:(BOOL)lockWindow {
@@ -282,11 +323,44 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
         coarse = [coarseValue intValue];
     }
 
-    [eventEmitter sendEventWithName:@"ConversionValuesUpdatedHandler" body:@{
+    [eventEmitter sendEventWithName:CONVERSION_VALUES_UPDATED_HANDLER_CONST body:@{
         @"conversionValue": @(fine),
         @"coarse": @(coarse),
         @"lock": @(lockWindow)
     }];
+}
+
++ (NSData *)convertHexStringToDataBytes:(NSString *)hexString {
+    if([hexString length] % 2 != 0) {
+        return nil;
+    }
+
+    const char *chars = [hexString UTF8String];
+    int index = 0, length = (int)[hexString length];
+
+    NSMutableData *data = [NSMutableData dataWithCapacity:length / 2];
+    char byteChars[3] = {'\0','\0','\0'};
+    unsigned long wholeByte;
+
+    while (index < length) {
+        byteChars[0] = chars[index++];
+        byteChars[1] = chars[index++];
+        wholeByte = strtoul(byteChars, NULL, 16);
+        [data appendBytes:&wholeByte length:1];
+    }
+    
+    return data;
+}
+
++ (BOOL)isValidNonEmptyString:(NSString *)nullableJavascriptString {
+    return nullableJavascriptString != nil
+    && ![nullableJavascriptString isEqual:[NSNull null]]
+    && [nullableJavascriptString isKindOfClass:NSString.class]
+    && nullableJavascriptString.length > 0
+    && ![nullableJavascriptString.lowercaseString isEqualToString:@"null"]
+    && ![nullableJavascriptString.lowercaseString isEqualToString:@"undefined"]
+    && ![nullableJavascriptString.lowercaseString isEqualToString:@"false"]
+    && ![nullableJavascriptString isEqualToString:@"NaN"];
 }
 
 @end

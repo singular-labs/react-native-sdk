@@ -28,6 +28,8 @@ export class SingularConfig {
     withLoggingEnabled(): SingularConfig;
     withEspDomains(domains: [string]) : SingularConfig;
     withFacebookAppId(appId: string): SingularConfig;
+    withDeviceAttributionCallbackHandler(deviceAttributionCallbackHandler:(attributes: Map) => void): SingularConfig;
+    withCustomSdid(customSdid: string, didSetSdidCallback: (result: string) => void, sdidReceivedCallback: (result: string) => void): SingularConfig;
 }
 
 export class SingularPurchase {

@@ -14,6 +14,8 @@ export class SingularConfig {
     conversionValuesUpdatedHandler;
     waitForTrackingAuthorizationWithTimeoutInterval;
 
+    deviceAttributionCallbackHandler;
+
     // Limit Data Sharing
     limitDataSharing;
 
@@ -24,6 +26,10 @@ export class SingularConfig {
     espDomains;
     facebookAppId;
 
+    // SDID
+    customSdid;
+    didSetSdidCallback;
+    sdidReceivedCallback;
 
     constructor(apikey, secret) {
         this.apikey = apikey;
@@ -79,6 +85,11 @@ export class SingularConfig {
         this.conversionValuesUpdatedHandler = conversionValuesUpdatedHandler;
         return this;
     }
+
+    withDeviceAttributionCallbackHandler(deviceAttributionCallbackHandler) {
+        this.deviceAttributionCallbackHandler = deviceAttributionCallbackHandler;
+        return this;
+    }
     
     withWaitForTrackingAuthorizationWithTimeoutInterval(waitForTrackingAuthorizationWithTimeoutInterval) {
         this.waitForTrackingAuthorizationWithTimeoutInterval = waitForTrackingAuthorizationWithTimeoutInterval;
@@ -122,6 +133,13 @@ export class SingularConfig {
 
     withFacebookAppId(appId) {
         this.facebookAppId = appId;
+        return this;
+    }
+
+    withCustomSdid(customSdid, didSetSdidCallback, sdidReceivedCallback) {
+        this.customSdid = customSdid;
+        this.didSetSdidCallback = didSetSdidCallback;
+        this.sdidReceivedCallback = sdidReceivedCallback;
         return this;
     }
 }

@@ -1,5 +1,8 @@
 package net.singular.react_native;
 
+import com.facebook.react.bridge.WritableArray;
+import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
@@ -10,12 +13,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.singular.sdk.SDIDAccessorHandler;
 import com.singular.sdk.Singular;
 import com.singular.sdk.SingularConfig;
+import com.singular.sdk.SingularDeviceAttributionHandler;
 import com.singular.sdk.SingularLinkHandler;
 import com.singular.sdk.SingularLinkParams;
 import com.singular.sdk.ShortLinkHandler;
@@ -32,6 +38,12 @@ import java.util.List;
 import java.util.Map;
 
 public class SingularBridgeModule extends ReactContextBaseJavaModule {
+    private interface Constants {
+        String SINGULAR_LINK_HANDLER_CONST = "SingularLinkHandler";
+        String DEVICE_ATTRIBUTION_CALLBACK_HANDLER_CONST = "DeviceAttributionCallbackHandler";
+        String SHORT_LINK_HANDLER_CONST = "ShortLinkHandler";
+    }
+
     public static final String REACT_CLASS = "SingularBridge";
     private static ReactApplicationContext reactContext = null;
     private static SingularConfig config;
@@ -191,6 +203,23 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 config.withDDLTimeoutInSec(ddlTimeoutSec);
             }
 
+            config.withSingularDeviceAttribution(new SingularDeviceAttributionHandler() {
+                @Override
+                public void onDeviceAttributionInfoReceived(Map<String, Object> deviceAttributionData) {
+                    try {
+                        WritableMap attributionInfo = convertJsonToWritableMap(new JSONObject(deviceAttributionData));
+
+                        // Raising the Device attribution handler in the react-native code
+
+                        reactContext.
+                                getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                                .emit(Constants.DEVICE_ATTRIBUTION_CALLBACK_HANDLER_CONST, attributionInfo);
+                    } catch (Throwable e) {
+                        Log.d("Singular", "could not convert json to writable map");
+                    }
+                }
+            });
+
             singularLinkHandler = new SingularLinkHandler() {
                 @Override
                 public void onResolved(SingularLinkParams singularLinkParams) {
@@ -211,7 +240,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                     // Raising the Singular Link handler in the react-native code
                     reactContext.
                             getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                            .emit("SingularLinkHandler", params);
+                            .emit(Constants.SINGULAR_LINK_HANDLER_CONST, params);
                 }
             };
 
@@ -279,8 +308,79 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                             property.getBoolean("OverrideExisting"));
                 }
             }
-        } catch (JSONException ignored) {
+
+            String customSdid = configJson.optString("customSdid");
+            if (!isValidNonEmptyString(customSdid)) {
+                customSdid = null;
+            }
+
+            config.withCustomSdid(customSdid, new SDIDAccessorHandler() {
+                @Override
+                public void didSetSdid(String result) {
+                    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("DidSetSdidCallback", result);
+                }
+
+                @Override
+                public void sdidReceived(String result) {
+                    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit("SdidReceivedCallback", result);
+                }
+            });
+        } catch (Throwable ignored) {
         }
+    }
+
+    private WritableMap convertJsonToWritableMap(JSONObject jsonObject) throws JSONException {
+        WritableMap map = Arguments.createMap();
+
+        Iterator<String> iterator = jsonObject.keys();
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            Object value = jsonObject.get(key);
+            if (value instanceof JSONObject) {
+                map.putMap(key, convertJsonToWritableMap((JSONObject) value));
+            } else if (value instanceof JSONArray) {
+                map.putArray(key, convertJsonToArray((JSONArray) value));
+            } else if (value instanceof Boolean) {
+                map.putBoolean(key, (Boolean) value);
+            } else if (value instanceof Integer) {
+                map.putInt(key, (Integer) value);
+            } else if (value instanceof Double) {
+                map.putDouble(key, (Double) value);
+            } else if (value instanceof String) {
+                map.putString(key, (String) value);
+            } else {
+                map.putString(key, value.toString());
+            }
+        }
+
+        return map;
+    }
+
+    private WritableArray convertJsonToArray(JSONArray jsonArray) throws JSONException {
+        WritableArray array = new WritableNativeArray();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            Object value = jsonArray.get(i);
+            if (value instanceof JSONObject) {
+                array.pushMap(this.convertJsonToWritableMap((JSONObject) value));
+            } else if (value instanceof JSONArray) {
+                array.pushArray(convertJsonToArray((JSONArray) value));
+            } else if (value instanceof Boolean) {
+                array.pushBoolean((Boolean) value);
+            } else if (value instanceof Integer) {
+                array.pushInt((Integer) value);
+            } else if (value instanceof Double) {
+                array.pushDouble((Double) value);
+            } else if (value instanceof String) {
+                array.pushString((String) value);
+            } else {
+                array.pushString(value.toString());
+            }
+        }
+
+        return array;
     }
 
     private WritableMap toWritableMap(Map<String, String> map) {
@@ -316,7 +416,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 args.put(key, jsonObject.get(key));
             }
 
-        } catch (JSONException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
 
@@ -366,7 +466,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                         params.putString("error", "");
                         reactContext.
                                 getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                                .emit("ShortLinkHandler", params);
+                                .emit(Constants.SHORT_LINK_HANDLER_CONST, params);
 
                     }
 
@@ -377,10 +477,18 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                         params.putString("error", error);
                         reactContext.
                                 getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                                .emit("ShortLinkHandler", params);
+                                .emit(Constants.SHORT_LINK_HANDLER_CONST, params);
                     }
                 });
+    }
 
-
+    private boolean isValidNonEmptyString(String nullableJavascriptString) {
+        return nullableJavascriptString != null
+                && nullableJavascriptString instanceof String
+                && nullableJavascriptString.length() > 0
+                && !nullableJavascriptString.toLowerCase().equals("null")
+                && !nullableJavascriptString.toLowerCase().equals("undefined")
+                && !nullableJavascriptString.toLowerCase().equals("false")
+                && !nullableJavascriptString.equals("NaN");
     }
 }

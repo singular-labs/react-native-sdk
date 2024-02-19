@@ -12,7 +12,7 @@ Pod::Spec.new do |spec|
   spec.source_files      = "ios/*.{h,m}"
   spec.platform         = :ios, "8.0"
   spec.static_framework = true
-  spec.dependency 'Singular-SDK', '12.2.0'
+  spec.dependency 'Singular-SDK', '12.3.1'
 
   spec.dependency 'React'
 end

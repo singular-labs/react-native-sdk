@@ -15,7 +15,11 @@ export class Singular {
         this._singularLinkHandler = singularConfig.singularLinkHandler;
         this._conversionValueUpdatedHandler = singularConfig.conversionValueUpdatedHandler;
         this._conversionValuesUpdatedHandler = singularConfig.conversionValuesUpdatedHandler;
-        
+        this._deviceAttributionCallbackHandler = singularConfig.deviceAttributionCallbackHandler;
+
+        this._didSetSdidCallback = singularConfig.didSetSdidCallback;
+        this._sdidReceivedCallback = singularConfig.sdidReceivedCallback;
+
         this._singularNativeEmitter.addListener(
             'SingularLinkHandler',
             singularLinkParams => {
@@ -37,6 +41,30 @@ export class Singular {
             updatedConversionValues => {
                 if (this._conversionValuesUpdatedHandler) {
                     this._conversionValuesUpdatedHandler(updatedConversionValues);
+                }
+            });
+
+        this._singularNativeEmitter.addListener(
+             'DeviceAttributionCallbackHandler',
+              attributes => {
+                if (this._deviceAttributionCallbackHandler) {
+                     this._deviceAttributionCallbackHandler(attributes);
+                }
+        });
+
+        this._singularNativeEmitter.addListener(
+            'SdidReceivedCallback',
+            result => {
+                if (this._sdidReceivedCallback) {
+                    this._sdidReceivedCallback(result);
+                }
+            });
+
+        this._singularNativeEmitter.addListener(
+            'DidSetSdidCallback',
+            result => {
+                if (this._didSetSdidCallback) {
+                    this._didSetSdidCallback(result);
                 }
             });
 
