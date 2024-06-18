@@ -84,4 +84,5 @@ export class Singular {
     static skanUpdateConversionValues(conversionValue: number, coarse: number, lock: boolean): void;
     static skanGetConversionValue(): number | null;
     static skanRegisterAppForAdNetworkAttribution(): void;
+    static createReferrerShortLink(baseLink: string, referrerName: string, referrerId: string, passthroughParams: SerializableObject, completionHandler: (result: string, error: string) => void): void;
 }
