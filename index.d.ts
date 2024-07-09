@@ -4,6 +4,9 @@ type SerializableObject = {
     [key in string | number]: SerializableValue;
 };
 
+export const Events:Map<string, string>;
+export const Attributes:Map<string, string>;
+
 export interface SingularLinkParams {
     deeplink: string;
     passthrough: string;
@@ -21,14 +24,17 @@ export class SingularConfig {
     withClipboardAttribution(): SingularConfig;
     withManualSkanConversionManagement(): SingularConfig;
     withConversionValueUpdatedHandler(handler: (value: number) => void): SingularConfig;
+    withConversionValuesUpdatedHandler(handler: (fineValue: number, coarseValue: number, lockWindow: boolean) => void): SingularConfig;
     withWaitForTrackingAuthorizationWithTimeoutInterval(interval: number): SingularConfig;
+    withShortLinkResolveTimeout(shortLinkResolveTimeout: number): SingularConfig;
     withLimitDataSharing(shouldLimitDataSharing: boolean): SingularConfig;
     withGlobalProperty(key: string, value: string, overrideExisting: boolean): SingularConfig;
     withOAIDCollection(): SingularConfig;
     withLoggingEnabled(): SingularConfig;
+    withLogLevel(level: number): SingularConfig;
     withEspDomains(domains: [string]) : SingularConfig;
     withFacebookAppId(appId: string): SingularConfig;
-    withDeviceAttributionCallbackHandler(deviceAttributionCallbackHandler:(attributes: Map) => void): SingularConfig;
+    withDeviceAttributionCallbackHandler(deviceAttributionCallbackHandler:(attributes: Map<string, any>) => void): SingularConfig;
     withCustomSdid(customSdid: string, didSetSdidCallback: (result: string) => void, sdidReceivedCallback: (result: string) => void): SingularConfig;
 }
 
@@ -84,5 +90,31 @@ export class Singular {
     static skanUpdateConversionValues(conversionValue: number, coarse: number, lock: boolean): void;
     static skanGetConversionValue(): number | null;
     static skanRegisterAppForAdNetworkAttribution(): void;
+    
     static createReferrerShortLink(baseLink: string, referrerName: string, referrerId: string, passthroughParams: SerializableObject, completionHandler: (result: string, error: string) => void): void;
+
+    static adRevenue(adData: SingularAdData): void;
+    
+    static setGlobalProperty(key: string, value: string, overrideExisting: boolean): boolean;
+    static unsetGlobalProperty(key: string): void;
+    static clearGlobalProperties(): void;
+    static getGlobalProperties(): Map<string, string>;
 }
+
+export class SingularAdData {
+    constructor(adPlatform: string, currency: string, revenue: number);
+    
+    withNetworkName(networkName: string): SingularAdData;
+    withAdType(adType: string): SingularAdData;
+    withGroupType(adGroupType: string): SingularAdData;
+    withImpressionId(impressionId: string): SingularAdData;
+    withAdPlacementName(adPlacementName: string): SingularAdData;
+    withAdUnitId(adUnitId: string): SingularAdData;
+    withAdGroupId(adGroupId: string): SingularAdData;
+    withAdGroupName(adGroupName: string): SingularAdData;
+    withAdGroupPriority(adGroupPriority: string): SingularAdData;
+    withPrecision(precision: string): SingularAdData;
+    withPlacementId(placementIdstring: string): SingularAdData;
+    withAdUnitName(adUnitName: string): SingularAdData;
+}
+
