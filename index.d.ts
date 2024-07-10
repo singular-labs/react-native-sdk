@@ -4,8 +4,8 @@ type SerializableObject = {
     [key in string | number]: SerializableValue;
 };
 
-export const Events:Map<string, string>;
-export const Attributes:Map<string, string>;
+export const Events: Object;
+export const Attributes: Object;
 
 export interface SingularLinkParams {
     deeplink: string;
