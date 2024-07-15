@@ -4,9 +4,6 @@ type SerializableObject = {
     [key in string | number]: SerializableValue;
 };
 
-export const Events: Object;
-export const Attributes: Object;
-
 export interface SingularLinkParams {
     deeplink: string;
     passthrough: string;
@@ -118,3 +115,73 @@ export class SingularAdData {
     withAdUnitName(adUnitName: string): SingularAdData;
 }
 
+import { Events } from './Events'
+import { Attributes } from './Attributes'
+
+declare const Events: {
+    sngRate:string,
+    sngSpentCredits:string,
+    sngTutorialComplete:string
+    sngLogin:string,
+    sngStartTrial:string,
+    sngSubscribe:string,
+    sngBook:string,
+    sngContentViewList:string,
+    sngInvite:string,
+    sngShare:string,
+    sngSubmitApplication:string,
+    sngUpdate:string,
+    sngEcommercePurchase:string,
+    sngViewCart:string,
+    sngAchievementUnlocked:string,
+    sngAddPaymentInfo:string,
+    sngAddToCart:string,
+    sngAddToWishlist:string,
+    sngCheckoutInitiated:string,
+    sngCompleteRegistration:string,
+    sngContentView:string,
+    sngLevelAchieved:string,
+    sngSearch:string
+};
+   
+declare const Attributes: {
+    sngAttrFromDate:string,
+    sngAttrToDate:string,
+    sngAttrAchievementId:string,
+    sngAttrContent:string,
+    sngAttrContentId:string,
+    sngAttrContentList:string,
+    sngAttrContentType:string,
+    sngAttrCouponCode:string,
+    sngAttrDeepLink:string,
+    sngAttrEventEnd:string,
+    sngAttrEventStart:string,
+    sngAttrHotelScore:string,
+    sngAttrItemDescription:string,
+    sngAttrItemPrice:string,
+    sngAttrLatitude:string,
+    sngAttrLevel:string,
+    sngAttrLocation:string,
+    sngAttrLocationAddressCountry:string,
+    sngAttrLocationAddressRegionOrProvince:string,
+    sngAttrLocationAddressStreet:string,
+    sngAttrLongitude:string,
+    sngAttrMax:string,
+    sngAttrNewVersion:string,
+    sngAttrOrigin:string,
+    sngAttrPaymentInfoAvailable:string,
+    sngAttrQuantity:string,
+    sngAttrRating:string,
+    sngAttrRegistrationMethod:string,
+    sngAttrReviewText:string,
+    sngAttrScore:string,
+    sngAttrSearchString:string,
+    sngAttrSubscriptionId:string,
+    sngAttrSuccess:string,
+    sngAttrTransactionId:string,
+    sngAttrTutorialId:string,
+    sngAttrValid:string
+}
+
+export { Events };
+export { Attributes };
