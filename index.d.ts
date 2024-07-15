@@ -21,14 +21,17 @@ export class SingularConfig {
     withClipboardAttribution(): SingularConfig;
     withManualSkanConversionManagement(): SingularConfig;
     withConversionValueUpdatedHandler(handler: (value: number) => void): SingularConfig;
+    withConversionValuesUpdatedHandler(handler: (fineValue: number, coarseValue: number, lockWindow: boolean) => void): SingularConfig;
     withWaitForTrackingAuthorizationWithTimeoutInterval(interval: number): SingularConfig;
+    withShortLinkResolveTimeout(shortLinkResolveTimeout: number): SingularConfig;
     withLimitDataSharing(shouldLimitDataSharing: boolean): SingularConfig;
     withGlobalProperty(key: string, value: string, overrideExisting: boolean): SingularConfig;
     withOAIDCollection(): SingularConfig;
     withLoggingEnabled(): SingularConfig;
+    withLogLevel(level: number): SingularConfig;
     withEspDomains(domains: [string]) : SingularConfig;
     withFacebookAppId(appId: string): SingularConfig;
-    withDeviceAttributionCallbackHandler(deviceAttributionCallbackHandler:(attributes: Map) => void): SingularConfig;
+    withDeviceAttributionCallbackHandler(deviceAttributionCallbackHandler:(attributes: Map<string, any>) => void): SingularConfig;
     withCustomSdid(customSdid: string, didSetSdidCallback: (result: string) => void, sdidReceivedCallback: (result: string) => void): SingularConfig;
 }
 
@@ -84,5 +87,101 @@ export class Singular {
     static skanUpdateConversionValues(conversionValue: number, coarse: number, lock: boolean): void;
     static skanGetConversionValue(): number | null;
     static skanRegisterAppForAdNetworkAttribution(): void;
+    
     static createReferrerShortLink(baseLink: string, referrerName: string, referrerId: string, passthroughParams: SerializableObject, completionHandler: (result: string, error: string) => void): void;
+
+    static adRevenue(adData: SingularAdData): void;
+    
+    static setGlobalProperty(key: string, value: string, overrideExisting: boolean): boolean;
+    static unsetGlobalProperty(key: string): void;
+    static clearGlobalProperties(): void;
+    static getGlobalProperties(): Map<string, string>;
 }
+
+export class SingularAdData {
+    constructor(adPlatform: string, currency: string, revenue: number);
+    
+    withNetworkName(networkName: string): SingularAdData;
+    withAdType(adType: string): SingularAdData;
+    withGroupType(adGroupType: string): SingularAdData;
+    withImpressionId(impressionId: string): SingularAdData;
+    withAdPlacementName(adPlacementName: string): SingularAdData;
+    withAdUnitId(adUnitId: string): SingularAdData;
+    withAdGroupId(adGroupId: string): SingularAdData;
+    withAdGroupName(adGroupName: string): SingularAdData;
+    withAdGroupPriority(adGroupPriority: string): SingularAdData;
+    withPrecision(precision: string): SingularAdData;
+    withPlacementId(placementIdstring: string): SingularAdData;
+    withAdUnitName(adUnitName: string): SingularAdData;
+}
+
+import { Events } from './Events'
+import { Attributes } from './Attributes'
+
+declare const Events: {
+    sngRate:string,
+    sngSpentCredits:string,
+    sngTutorialComplete:string
+    sngLogin:string,
+    sngStartTrial:string,
+    sngSubscribe:string,
+    sngBook:string,
+    sngContentViewList:string,
+    sngInvite:string,
+    sngShare:string,
+    sngSubmitApplication:string,
+    sngUpdate:string,
+    sngEcommercePurchase:string,
+    sngViewCart:string,
+    sngAchievementUnlocked:string,
+    sngAddPaymentInfo:string,
+    sngAddToCart:string,
+    sngAddToWishlist:string,
+    sngCheckoutInitiated:string,
+    sngCompleteRegistration:string,
+    sngContentView:string,
+    sngLevelAchieved:string,
+    sngSearch:string
+};
+   
+declare const Attributes: {
+    sngAttrFromDate:string,
+    sngAttrToDate:string,
+    sngAttrAchievementId:string,
+    sngAttrContent:string,
+    sngAttrContentId:string,
+    sngAttrContentList:string,
+    sngAttrContentType:string,
+    sngAttrCouponCode:string,
+    sngAttrDeepLink:string,
+    sngAttrEventEnd:string,
+    sngAttrEventStart:string,
+    sngAttrHotelScore:string,
+    sngAttrItemDescription:string,
+    sngAttrItemPrice:string,
+    sngAttrLatitude:string,
+    sngAttrLevel:string,
+    sngAttrLocation:string,
+    sngAttrLocationAddressCountry:string,
+    sngAttrLocationAddressRegionOrProvince:string,
+    sngAttrLocationAddressStreet:string,
+    sngAttrLongitude:string,
+    sngAttrMax:string,
+    sngAttrNewVersion:string,
+    sngAttrOrigin:string,
+    sngAttrPaymentInfoAvailable:string,
+    sngAttrQuantity:string,
+    sngAttrRating:string,
+    sngAttrRegistrationMethod:string,
+    sngAttrReviewText:string,
+    sngAttrScore:string,
+    sngAttrSearchString:string,
+    sngAttrSubscriptionId:string,
+    sngAttrSuccess:string,
+    sngAttrTransactionId:string,
+    sngAttrTutorialId:string,
+    sngAttrValid:string
+}
+
+export { Events };
+export { Attributes };
