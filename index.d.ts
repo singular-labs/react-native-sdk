@@ -36,17 +36,17 @@ export class SingularConfig {
 }
 
 export class SingularPurchase {
-    constructor(revenue: string, currency: string);
+    constructor(revenue: number, currency: string);
 
     getPurchaseValues(): SerializableObject;
 }
 
 export class SingularIOSPurchase extends SingularPurchase {
-    constructor(revenue: string, currency: string, productId: string, transactionId: string, receipt: string);
+    constructor(revenue: number, currency: string, productId: string, transactionId: string, receipt: string);
 }
 
 export class SingularAndroidPurchase extends SingularPurchase {
-    constructor(revenue: string, currency: string, receipt: string, signature: string);
+    constructor(revenue: number, currency: string, receipt: string, signature: string);
 }
 
 export class Singular {
