@@ -31,6 +31,11 @@ export class SingularConfig {
     didSetSdidCallback;
     sdidReceivedCallback;
 
+    // Push notifications
+    pushNotificationsLinkPaths;
+    
+    limitedIdentifiersEnabled;
+
     constructor(apikey, secret) {
         this.apikey = apikey;
         this.secret = secret;
@@ -44,6 +49,8 @@ export class SingularConfig {
         this.collectOAID = false;
         this.enableLogging = false;
         this.clipboardAttribution = false;
+        this.pushNotificationsLinkPaths = [[]];
+        this.limitedIdentifiersEnabled = false;
     }
 
     withSessionTimeoutInSec(sessionTimeout) {
@@ -140,6 +147,16 @@ export class SingularConfig {
         this.customSdid = customSdid;
         this.didSetSdidCallback = didSetSdidCallback;
         this.sdidReceivedCallback = sdidReceivedCallback;
+        return this;
+    }
+
+    withPushNotificationsLinkPaths(pushNotificationsLinkPaths) {
+        this.pushNotificationsLinkPaths = pushNotificationsLinkPaths;
+        return this;
+    }
+    
+    withLimitedIdentifiersEnabled(limitedIdentifiersEnabled) {
+        this.limitedIdentifiersEnabled = limitedIdentifiersEnabled;
         return this;
     }
 }

@@ -33,6 +33,8 @@ export class SingularConfig {
     withFacebookAppId(appId: string): SingularConfig;
     withDeviceAttributionCallbackHandler(deviceAttributionCallbackHandler:(attributes: Map<string, any>) => void): SingularConfig;
     withCustomSdid(customSdid: string, didSetSdidCallback: (result: string) => void, sdidReceivedCallback: (result: string) => void): SingularConfig;
+    withPushNotificationsLinkPaths(pushNotificationsLinkPaths: [[string]]) : SingularConfig;
+    withLimitedIdentifiersEnabled(limitedIdentifiersEnabled: boolean): SingularConfig;
 }
 
 export class SingularPurchase {
