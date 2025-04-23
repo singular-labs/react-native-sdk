@@ -218,4 +218,10 @@ export class Singular {
     static getGlobalProperties() {
         return SingularBridge.getGlobalProperties();
     }
+
+    static handlePushNotification(pushNotificationPayload) {
+        if (Platform.OS === 'ios') {
+           SingularBridge.handlePushNotification(pushNotificationPayload);
+        }
+    }
 }
