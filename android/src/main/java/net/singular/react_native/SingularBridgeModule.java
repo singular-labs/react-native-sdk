@@ -180,6 +180,11 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         return toWritableMap(Singular.getGlobalProperties());
     }
 
+    @ReactMethod
+    public void setLimitAdvertisingIdentifiers(boolean enabled) {
+        Singular.setLimitAdvertisingIdentifiers(enabled);
+    }
+
     private void buildSingularConfig(String configString) {
         try {
             JSONObject configJson = new JSONObject(configString);
@@ -190,15 +195,9 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             config = new SingularConfig(apikey, secret);
 
             JSONArray espDomains = configJson.optJSONArray("espDomains");
-            if (espDomains != null && espDomains.length() >0){
-                List<String> domainsList = new LinkedList<>();
-                for (int i = 0 ; i < espDomains.length() ; i++){
-                    String domain = espDomains.getString(i);
-                    if (domain != null && domain.length() >0){
-                        domainsList.add(domain);
-                    }
-                }
-                config.withESPDomains(domainsList);
+            List<String> espDomainsList = convertJsonArrayToList(espDomains);
+            if (espDomainsList != null && espDomainsList.size() > 0) {
+                config.withESPDomains(espDomainsList);
             }
 
             long ddlTimeoutSec = configJson.optLong("ddlTimeoutSec", 0);
@@ -304,9 +303,9 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 config.withLoggingEnabled();
             }
 
-            boolean limitedIdentifiersEnabled = configJson.optBoolean("limitedIdentifiersEnabled", false);
-            if (limitedIdentifiersEnabled) {
-                config.withLimitedIdentifiersEnabled();
+            boolean limitAdvertisingIdentifiers = configJson.optBoolean("limitAdvertisingIdentifiers", false);
+            if (limitAdvertisingIdentifiers) {
+                config.withLimitAdvertisingIdentifiers();
             }
 
             int logLevel = configJson.optInt("logLevel", -1);
@@ -337,7 +336,6 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             if (!isValidNonEmptyString(customSdid)) {
                 customSdid = null;
             }
-
             config.withCustomSdid(customSdid, new SDIDAccessorHandler() {
                 @Override
                 public void didSetSdid(String result) {
@@ -351,6 +349,12 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                             .emit("SdidReceivedCallback", result);
                 }
             });
+
+            JSONArray brandedDomains = configJson.optJSONArray("brandedDomains");
+            List<String> brandedDomainsList = convertJsonArrayToList(brandedDomains);
+            if (brandedDomainsList != null && brandedDomainsList.size() > 0) {
+                config.withBrandedDomains(brandedDomainsList);
+            }
         } catch (Throwable ignored) {
         }
     }
@@ -402,6 +406,26 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         }
 
         return map;
+    }
+
+    private List<String> convertJsonArrayToList(JSONArray jsonArray) throws JSONException {
+        try {
+            if (jsonArray == null || jsonArray.length() <= 0) {
+                return null;
+            }
+
+            List<String> domainsList = new LinkedList<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String domain = jsonArray.getString(i);
+                if (domain != null && domain.length() > 0) {
+                    domainsList.add(domain);
+                }
+            }
+
+            return domainsList;
+        } catch (Throwable throwable) {
+            return null;
+        }
     }
 
     private WritableArray convertJsonToArray(JSONArray jsonArray) throws JSONException {

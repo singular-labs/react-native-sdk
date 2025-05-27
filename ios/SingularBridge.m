@@ -76,6 +76,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     singularConfig.launchOptions = launchOptions;
     singularConfig.supportedDomains = [singularConfigDict objectForKey:@"supportedDomains"];
     singularConfig.espDomains = [singularConfigDict objectForKey:@"espDomains"];
+    singularConfig.brandedDomains = [singularConfigDict objectForKey:@"brandedDomains"];
     singularConfig.shortLinkResolveTimeOut = [[singularConfigDict objectForKey:@"shortLinkResolveTimeout"] longValue];
     singularConfig.singularLinksHandler = ^(SingularLinkParams * params){
         [SingularBridge handleSingularLink:params];
@@ -145,7 +146,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     // push
     singularConfig.pushNotificationLinkPath = [singularConfigDict objectForKey:@"pushNotificationsLinkPaths"];
 
-    singularConfig.limitedIdentifiersEnabled = [[singularConfigDict objectForKey:@"limitedIdentifiersEnabled"] boolValue];
+    singularConfig.limitAdvertisingIdentifiers = [[singularConfigDict objectForKey:@"limitAdvertisingIdentifiers"] boolValue];
 
     eventEmitter = self;
 
@@ -278,6 +279,10 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
 
 RCT_EXPORT_METHOD(handlePushNotification:(NSDictionary *)pushNotificationPayload) {
     [Singular handlePushNotification:pushNotificationPayload];
+}
+
+RCT_EXPORT_METHOD(setLimitAdvertisingIdentifiers:(BOOL)enabled) {
+    [Singular setLimitAdvertisingIdentifiers:enabled];
 }
 
 #pragma mark - Private methods
