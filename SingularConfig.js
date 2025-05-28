@@ -34,7 +34,10 @@ export class SingularConfig {
     // Push notifications
     pushNotificationsLinkPaths;
     
-    limitedIdentifiersEnabled;
+    // branded domains
+    brandedDomains;
+    
+    limitAdvertisingIdentifiers;
 
     constructor(apikey, secret) {
         this.apikey = apikey;
@@ -50,7 +53,7 @@ export class SingularConfig {
         this.enableLogging = false;
         this.clipboardAttribution = false;
         this.pushNotificationsLinkPaths = [[]];
-        this.limitedIdentifiersEnabled = false;
+        this.limitAdvertisingIdentifiers = false;
     }
 
     withSessionTimeoutInSec(sessionTimeout) {
@@ -155,8 +158,13 @@ export class SingularConfig {
         return this;
     }
     
-    withLimitedIdentifiersEnabled(limitedIdentifiersEnabled) {
-        this.limitedIdentifiersEnabled = limitedIdentifiersEnabled;
+    withBrandedDomains(domains) {
+        this.brandedDomains = domains;
+        return this;
+    }
+    
+    withLimitAdvertisingIdentifiers(limitAdvertisingIdentifiers) {
+        this.limitAdvertisingIdentifiers = limitAdvertisingIdentifiers;
         return this;
     }
 }

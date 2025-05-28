@@ -224,4 +224,8 @@ export class Singular {
            SingularBridge.handlePushNotification(pushNotificationPayload);
         }
     }
+
+    static setLimitAdvertisingIdentifiers(enabled) {
+        SingularBridge.setLimitAdvertisingIdentifiers(enabled);
+    }
 }

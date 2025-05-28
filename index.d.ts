@@ -34,7 +34,8 @@ export class SingularConfig {
     withDeviceAttributionCallbackHandler(deviceAttributionCallbackHandler:(attributes: Map<string, any>) => void): SingularConfig;
     withCustomSdid(customSdid: string, didSetSdidCallback: (result: string) => void, sdidReceivedCallback: (result: string) => void): SingularConfig;
     withPushNotificationsLinkPaths(pushNotificationsLinkPaths: [[string]]) : SingularConfig;
-    withLimitedIdentifiersEnabled(limitedIdentifiersEnabled: boolean): SingularConfig;
+    withBrandedDomains(domains: [string]) : SingularConfig;
+    withLimitAdvertisingIdentifiers(limitAdvertisingIdentifiers: boolean): SingularConfig;
 }
 
 export class SingularPurchase {
@@ -98,6 +99,9 @@ export class Singular {
     static unsetGlobalProperty(key: string): void;
     static clearGlobalProperties(): void;
     static getGlobalProperties(): Map<string, string>;
+
+    static handlePushNotification(pushNotificationPayload: boolean): void;
+    static setLimitAdvertisingIdentifiers(enabled: boolean): void;
 }
 
 export class SingularAdData {
