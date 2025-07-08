@@ -36,6 +36,7 @@ export class SingularConfig {
     withPushNotificationsLinkPaths(pushNotificationsLinkPaths: [[string]]) : SingularConfig;
     withBrandedDomains(domains: [string]) : SingularConfig;
     withLimitAdvertisingIdentifiers(limitAdvertisingIdentifiers: boolean): SingularConfig;
+    withEnableOdmWithTimeoutInterval(enableOdmWithTimeoutInterval: number) : SingularConfig;
 }
 
 export class SingularPurchase {
