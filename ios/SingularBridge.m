@@ -106,6 +106,9 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     singularConfig.waitForTrackingAuthorizationWithTimeoutInterval =
         [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
 
+    singularConfig.enableOdmWithTimeoutInterval =
+            [[singularConfigDict objectForKey:@"enableOdmWithTimeoutInterval"] intValue];
+
     singularConfig.deviceAttributionCallback = ^(NSDictionary *deviceAttributionData) {
         [SingularBridge handleDeviceAttributionData:deviceAttributionData];
     };

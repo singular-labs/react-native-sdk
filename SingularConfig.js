@@ -54,6 +54,7 @@ export class SingularConfig {
         this.clipboardAttribution = false;
         this.pushNotificationsLinkPaths = [[]];
         this.limitAdvertisingIdentifiers = false;
+        this.enableOdmWithTimeoutInterval = -1;
     }
 
     withSessionTimeoutInSec(sessionTimeout) {
@@ -167,4 +168,10 @@ export class SingularConfig {
         this.limitAdvertisingIdentifiers = limitAdvertisingIdentifiers;
         return this;
     }
+
+    withEnableOdmWithTimeoutInterval(enableOdmWithTimeoutInterval) {
+        this.enableOdmWithTimeoutInterval = enableOdmWithTimeoutInterval;
+        return this;
+    }
+
 }
