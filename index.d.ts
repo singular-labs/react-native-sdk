@@ -104,7 +104,7 @@ export class Singular {
     static addDeviceAttributionCallbackListener(handler: (attributes: SerializableObject) => void): void;
     static addDidSetSdidListener(handler: (result: string) => void): void;
     static addSdidReceivedCallbackListener(handler: (result: string) => void): void;
-    static addConversionValueUpdatedListener(handler: (value: number) => void)): void;
+    static addConversionValueUpdatedListener(handler: (value: number) => void): void;
     static addConversionValuesUpdatedListener(handler: (updatedValues: SerializableObject)): void;
 }
 
