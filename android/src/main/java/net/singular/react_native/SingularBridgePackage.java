@@ -2,20 +2,23 @@ package net.singular.react_native;
 
 import androidx.annotation.NonNull;
 
-import com.facebook.react.ReactPackage;
-import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.ReactPackage;
 import com.facebook.react.uimanager.ViewManager;
+import net.singular.react_native.SingularBridgeModule;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class SingularBridgePackage implements ReactPackage {
+
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> nativeModules = new ArrayList<>();
+        // Add SingularBridgeModule - the correct implementation is auto-selected by build.gradle
+        // based on isNewArchitectureEnabled()
         nativeModules.add(new SingularBridgeModule(reactContext));
         return nativeModules;
     }
@@ -26,3 +29,4 @@ public class SingularBridgePackage implements ReactPackage {
         return Collections.emptyList();
     }
 }
+
