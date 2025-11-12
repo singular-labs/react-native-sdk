@@ -98,14 +98,6 @@ export class Singular {
 
     static handlePushNotification(pushNotificationPayload: SerializableObject): void;
     static setLimitAdvertisingIdentifiers(enabled: boolean): void;
-
-    // New Architecture EventEmitter methods
-    static addSingularLinkListener(handler: (params: SingularLinkParams) => void): void;
-    static addDeviceAttributionCallbackListener(handler: (attributes: SerializableObject) => void): void;
-    static addDidSetSdidListener(handler: (result: string) => void): void;
-    static addSdidReceivedCallbackListener(handler: (result: string) => void): void;
-    static addConversionValueUpdatedListener(handler: (value: number) => void): void;
-    static addConversionValuesUpdatedListener(handler: (updatedValues: SerializableObject)): void;
 }
 
 export class SingularAdData {

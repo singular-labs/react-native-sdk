@@ -28,10 +28,6 @@ export interface SingularAdData {
   ad_platform: string;
   ad_currency: string;
   ad_revenue: number;
-  r: number; // revenue
-  pcc: string; // currency
-  is_admon_revenue: boolean;
-  is_revenue_event: boolean;
   ad_mediation_platform?: string;
   ad_type?: string;
   ad_group_type?: string;

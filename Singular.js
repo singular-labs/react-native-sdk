@@ -315,7 +315,11 @@ export class Singular {
             }
         }
 
-        this.eventWithArgs(ADMON_REVENUE_EVENT_NAME, adData);
+        if (isNewArch) {
+            SingularBridge.adRevenue(adData);
+        } else {
+            this.eventWithArgs(ADMON_REVENUE_EVENT_NAME, adData);
+        }
     }
 
     static setGlobalProperty(key, value,overrideExisting) {
@@ -342,30 +346,6 @@ export class Singular {
 
     static setLimitAdvertisingIdentifiers(enabled) {
         SingularBridge.setLimitAdvertisingIdentifiers(enabled);
-    }
-
-    static addSingularLinkListener(callback) {
-        this._singularLinkHandler = callback;
-    }
-
-    static addDeviceAttributionCallbackListener(callback) {
-        this._deviceAttributionCallbackHandler = callback;
-    }
-
-    static addDidSetSdidListener(callback) {
-        this._didSetSdidCallback = callback;
-    }
-
-    static addSdidReceivedCallbackListener(callback) {
-        this._sdidReceivedCallback = callback;
-    }
-
-    static addConversionValueUpdatedListener(callback) {
-        this._conversionValueUpdatedHandler = callback;
-    }
-
-    static addConversionValuesUpdatedListener(callback) {
-        this._conversionValuesUpdatedHandler = callback;
     }
 }
 

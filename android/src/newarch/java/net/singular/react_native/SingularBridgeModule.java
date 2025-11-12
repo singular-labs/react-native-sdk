@@ -324,19 +324,10 @@ public class SingularBridgeModule extends NativeSingularSpec {
             adRevenueData.put(Constants.AdRevenue.AD_PLATFORM, adData.getString(Constants.AdRevenue.AD_PLATFORM));
             adRevenueData.put(Constants.AdRevenue.AD_CURRENCY, adData.getString(Constants.AdRevenue.AD_CURRENCY));
             adRevenueData.put(Constants.AdRevenue.AD_REVENUE, adData.getDouble(Constants.AdRevenue.AD_REVENUE));
-
-            if (adData.hasKey(Constants.AdRevenue.R)) {
-                adRevenueData.put(Constants.AdRevenue.R, adData.getDouble(Constants.AdRevenue.R));
-            }
-            if (adData.hasKey(Constants.AdRevenue.PCC)) {
-                adRevenueData.put(Constants.AdRevenue.PCC, adData.getString(Constants.AdRevenue.PCC));
-            }
-            if (adData.hasKey(Constants.AdRevenue.IS_ADMON_REVENUE)) {
-                adRevenueData.put(Constants.AdRevenue.IS_ADMON_REVENUE, adData.getBoolean(Constants.AdRevenue.IS_ADMON_REVENUE));
-            }
-            if (adData.hasKey(Constants.AdRevenue.IS_REVENUE_EVENT)) {
-                adRevenueData.put(Constants.AdRevenue.IS_REVENUE_EVENT, adData.getBoolean(Constants.AdRevenue.IS_REVENUE_EVENT));
-            }
+            adRevenueData.put(Constants.AdRevenue.R, adData.getDouble(Constants.AdRevenue.AD_REVENUE));
+            adRevenueData.put(Constants.AdRevenue.PCC, adData.getString(Constants.AdRevenue.AD_CURRENCY));
+            adRevenueData.put(Constants.AdRevenue.IS_ADMON_REVENUE, true);
+            adRevenueData.put(Constants.AdRevenue.IS_REVENUE_EVENT, true);
 
             if (adData.hasKey(Constants.AdRevenue.AD_MEDIATION_PLATFORM) && !adData.isNull(Constants.AdRevenue.AD_MEDIATION_PLATFORM)) {
                 adRevenueData.put(Constants.AdRevenue.AD_MEDIATION_PLATFORM, adData.getString(Constants.AdRevenue.AD_MEDIATION_PLATFORM));
@@ -366,7 +357,7 @@ public class SingularBridgeModule extends NativeSingularSpec {
                 adRevenueData.put(Constants.AdRevenue.AD_GROUP_NAME, adData.getString(Constants.AdRevenue.AD_GROUP_NAME));
             }
             if (adData.hasKey(Constants.AdRevenue.AD_GROUP_PRIORITY) && !adData.isNull(Constants.AdRevenue.AD_GROUP_PRIORITY)) {
-                adRevenueData.put(Constants.AdRevenue.AD_GROUP_PRIORITY, adData.getString(Constants.AdRevenue.AD_GROUP_PRIORITY));
+                adRevenueData.put(Constants.AdRevenue.AD_GROUP_PRIORITY, adData.getDouble(Constants.AdRevenue.AD_GROUP_PRIORITY));
             }
             if (adData.hasKey(Constants.AdRevenue.AD_PRECISION) && !adData.isNull(Constants.AdRevenue.AD_PRECISION)) {
                 adRevenueData.put(Constants.AdRevenue.AD_PRECISION, adData.getString(Constants.AdRevenue.AD_PRECISION));
@@ -881,9 +872,7 @@ public class SingularBridgeModule extends NativeSingularSpec {
             purchaseValues.put("pcc", purchase.getString("currency"));
         }
 
-        if (purchase.hasKey("is_revenue_event")) {
-            purchaseValues.put("is_revenue_event", purchase.getBoolean("is_revenue_event"));
-        }
+        purchaseValues.put("is_revenue_event", true);
 
         if (purchase.hasKey("receipt") && !purchase.isNull("receipt")) {
             String receiptValue = purchase.getString("receipt");
