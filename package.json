@@ -1,14 +1,31 @@
 {
   "name": "singular-react-native",
-  "version": "3.9.0",
+  "version": "4.0.0",
+  "description": "Singular React Native SDK",
+  "main": "index.js",
+  "codegenConfig": {
+        "name": "NativeSingular",
+        "type": "modules",
+        "jsSrcsDir": "./js",
+        "android": {
+          "javaPackageName": "net.singular.react_native"
+        },
+        "ios": {
+          "outputPath": "ios/build/generated/ios"
+        }
+  },
   "peerDependencies": {
+    "react": ">=16.0.0",
     "react-native": ">=0.46.4"
   },
   "files": [
     "android/src",
     "android/build.gradle",
     "ios/SingularBridge.h",
-    "ios/SingularBridge.m",
+    "ios/SingularBridgeOldArch.m",
+    "ios/SingularBridgeNewArch.mm",
+    "ios/SingularHelper.h",
+    "ios/SingularHelper.m",
     "ios/SingularReactNative.xcodeproj/project.pbxproj",
     "Singular-React-Native.podspec",
     "Singular.js",
@@ -19,15 +36,18 @@
     "Events.js",
     "index.js",
     "app.plugin.js",
-    "index.d.ts"
+    "index.d.ts",
+    "js/NativeSingular.ts",
+    "build/generated/ios/",
+    "build/generated/android/"
   ],
   "types": "./index.d.ts",
   "devDependencies": {
-    "@babel/core": "7.7.4",
-    "@babel/runtime": "7.7.4",
-    "eslint": "6.7.2",
-    "jest": "24.9.0",
-    "react-native": "0.61.5",
-    "react": "16.9.0"
+    "@babel/core": "^7.7.4",
+    "@babel/runtime": "^7.7.4",
+    "eslint": "^6.7.2",
+    "jest": "^24.9.0",
+    "react-native": "^0.61.5",
+    "react": "^16.9.0"
   }
 }

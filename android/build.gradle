@@ -1,31 +1,40 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
-    }
+def isNewArchitectureEnabled() {
+    return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
 
 apply plugin: 'com.android.library'
 
+if (isNewArchitectureEnabled()) {
+    apply plugin: 'com.facebook.react'
+}
+
 android {
     compileSdkVersion 31
     buildToolsVersion "28.0.3"
+    namespace "net.singular.react_native"
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
     }
+    
     lintOptions {
         abortOnError false
+    }
+
+    sourceSets {
+        main {
+            if (isNewArchitectureEnabled()) {
+                java.srcDirs = ['src/main/java', 'src/newarch/java', 'build/generated/source/codegen/java']
+            } else {
+                java.srcDirs = ['src/main/java', 'src/oldarch/java']
+            }
+        }
     }
 }
 
@@ -34,13 +43,20 @@ repositories {
         url "../node_modules/react-native/android"
     }
     mavenCentral()
-    jcenter()
     maven { url 'https://maven.singular.net/' }
     google()
 }
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.singular.sdk:singular_sdk:12.9.1'
+    implementation 'com.singular.sdk:singular_sdk:12.10.0'
     implementation 'com.android.support:support-annotations:28.0.0'
+}
+
+if (isNewArchitectureEnabled()) {
+    react {
+        jsRootDir = file("../js/")
+        libraryName = "NativeSingular"
+        codegenJavaPackageName = "net.singular.react_native"
+    }
 }

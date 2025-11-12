@@ -39,13 +39,8 @@ import java.util.List;
 import java.util.Map;
 
 public class SingularBridgeModule extends ReactContextBaseJavaModule {
-    private interface Constants {
-        String SINGULAR_LINK_HANDLER_CONST = "SingularLinkHandler";
-        String DEVICE_ATTRIBUTION_CALLBACK_HANDLER_CONST = "DeviceAttributionCallbackHandler";
-        String SHORT_LINK_HANDLER_CONST = "ShortLinkHandler";
-    }
+    public static final String NAME = "SingularBridge";
 
-    public static final String REACT_CLASS = "SingularBridge";
     private static ReactApplicationContext reactContext = null;
     private static SingularConfig config;
     private static SingularLinkHandler singularLinkHandler;
@@ -61,128 +56,128 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
 
     @Override
     public String getName() {
-        return REACT_CLASS;
+        return NAME;
     }
 
     @ReactMethod
     public void init(String configJsonString) {
         buildSingularConfig(configJsonString);
-        Singular.init(reactContext, config);
+        SingularHelper.initWithSingularConfig(reactContext, config);
     }
 
     @ReactMethod
     public void setCustomUserId(String customUserId) {
-        Singular.setCustomUserId(customUserId);
+        SingularHelper.setCustomUserId(customUserId);
     }
 
     @ReactMethod
     public void unsetCustomUserId() {
-        Singular.unsetCustomUserId();
+        SingularHelper.unsetCustomUserId();
     }
 
     @ReactMethod
     public void setDeviceCustomUserId(String customUserId) {
-        Singular.setDeviceCustomUserId(customUserId);
+        SingularHelper.setDeviceCustomUserId(customUserId);
     }
 
     @ReactMethod
     public void event(String name) {
-        Singular.event(name);
+        SingularHelper.event(name);
     }
 
     @ReactMethod
     public void eventWithArgs(String name, String extra) {
-        Singular.event(name, extra);
+        SingularHelper.eventWithArgs(name, extra);
     }
 
     @ReactMethod
     public void revenue(String currency, double amount) {
-        Singular.revenue(currency, amount);
+        SingularHelper.revenue(currency, amount);
     }
 
     @ReactMethod
     public void revenueWithArgs(String currency, double amount, String args) {
-        Singular.revenue(currency, amount, convertJsonToMap(args));
+        SingularHelper.revenueWithArgs(currency, amount, convertJsonToMap(args));
     }
 
     @ReactMethod
     public void customRevenue(String eventName, String currency, double amount) {
-        Singular.customRevenue(eventName, currency, amount);
+        SingularHelper.customRevenue(eventName, currency, amount);
     }
 
     @ReactMethod
     public void customRevenueWithArgs(String eventName, String currency, double amount, String args) {
-        Singular.customRevenue(eventName, currency, amount, convertJsonToMap(args));
+        SingularHelper.customRevenueWithArgs(eventName, currency, amount, convertJsonToMap(args));
     }
 
     @ReactMethod
     public void setUninstallToken(String token) {
-        Singular.setFCMDeviceToken(token);
+        SingularHelper.setUninstallToken(token);
     }
 
     @ReactMethod
     public void trackingOptIn() {
-        Singular.trackingOptIn();
+        SingularHelper.trackingOptIn();
     }
 
     @ReactMethod
     public void trackingUnder13() {
-        Singular.trackingUnder13();
+        SingularHelper.trackingUnder13();
     }
 
     @ReactMethod
     public void stopAllTracking() {
-        Singular.stopAllTracking();
+        SingularHelper.stopAllTracking();
     }
 
     @ReactMethod
     public void resumeAllTracking() {
-        Singular.resumeAllTracking();
+        SingularHelper.resumeAllTracking();
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     public boolean isAllTrackingStopped() {
-        return Singular.isAllTrackingStopped();
+        return SingularHelper.isAllTrackingStopped();
     }
 
     @ReactMethod
     public void limitDataSharing(boolean limitDataSharingValue) {
-        Singular.limitDataSharing(limitDataSharingValue);
+        SingularHelper.limitDataSharing(limitDataSharingValue);
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     public boolean getLimitDataSharing() {
-        return Singular.getLimitDataSharing();
+        return SingularHelper.getLimitDataSharing();
     }
 
     @ReactMethod
     public void setReactSDKVersion(String wrapper, String version) {
-        Singular.setWrapperNameAndVersion(wrapper, version);
+        SingularHelper.setReactSDKVersion(wrapper, version);
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     public boolean setGlobalProperty(String key, String value, boolean overrideExisting) {
-        return Singular.setGlobalProperty(key,value,overrideExisting);
+        return SingularHelper.setGlobalProperty(key, value, overrideExisting);
     }
 
     @ReactMethod
     public void unsetGlobalProperty(String key) {
-        Singular.unsetGlobalProperty(key);
+        SingularHelper.unsetGlobalProperty(key);
     }
 
     @ReactMethod
     public void clearGlobalProperties() {
-        Singular.clearGlobalProperties();
+        SingularHelper.clearGlobalProperties();
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
     public WritableMap getGlobalProperties() {
-        return toWritableMap(Singular.getGlobalProperties());
+        return toWritableMap(SingularHelper.getGlobalProperties());
     }
 
     @ReactMethod
     public void setLimitAdvertisingIdentifiers(boolean enabled) {
-        Singular.setLimitAdvertisingIdentifiers(enabled);
+        SingularHelper.setLimitAdvertisingIdentifiers(enabled);
     }
 
     private void buildSingularConfig(String configString) {
@@ -215,7 +210,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
 
                         reactContext.
                                 getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                                .emit(Constants.DEVICE_ATTRIBUTION_CALLBACK_HANDLER_CONST, attributionInfo);
+                                .emit(SingularHelper.Constants.DEVICE_ATTRIBUTION_CALLBACK_HANDLER_CONST, attributionInfo);
                     } catch (Throwable e) {
                         Log.d("Singular", "could not convert json to writable map");
                     }
@@ -242,7 +237,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                     // Raising the Singular Link handler in the react-native code
                     reactContext.
                             getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                            .emit(Constants.SINGULAR_LINK_HANDLER_CONST, params);
+                            .emit(SingularHelper.Constants.SINGULAR_LINK_HANDLER_CONST, params);
                 }
             };
 
@@ -253,6 +248,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                 pushNotificationsLinkPaths = pushSelectors;
             }
 
+            long shortLinkResolveTimeout = configJson.optLong("shortLinkResolveTimeout", 10);
             if (reactContext.hasCurrentActivity()) {
                 Intent intent = getCurrentActivity().getIntent();
                 if (intent != null) {
@@ -260,8 +256,6 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
 
                     if (intentHash != currentIntentHash) {
                         currentIntentHash = intentHash;
-
-                        long shortLinkResolveTimeout = configJson.optLong("shortLinkResolveTimeout", 10);
                         config.withSingularLink(getCurrentActivity().getIntent(), singularLinkHandler, shortLinkResolveTimeout);
 
                         if (intent.getExtras() != null && intent.getExtras().size() > 0) {
@@ -271,8 +265,10 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                         }
                     }
                 }
+            } else {
+                config.withSingularLink(null, singularLinkHandler, shortLinkResolveTimeout);
             }
-
+            
             String customUserId = configJson.optString("customUserId", null);
             if (customUserId != null) {
                 config.withCustomUserId(customUserId);
@@ -319,7 +315,6 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             }
 
             JSONObject globalProperties = configJson.optJSONObject("globalProperties");
-            // Adding all of the global properties to the singular config
             if (globalProperties != null) {
                 Iterator<String> iter = globalProperties.keys();
                 while (iter.hasNext()) {
@@ -333,20 +328,20 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             }
 
             String customSdid = configJson.optString("customSdid");
-            if (!isValidNonEmptyString(customSdid)) {
+            if (!SingularHelper.isValidNonEmptyString(customSdid)) {
                 customSdid = null;
             }
             config.withCustomSdid(customSdid, new SDIDAccessorHandler() {
                 @Override
                 public void didSetSdid(String result) {
                     reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                            .emit("DidSetSdidCallback", result);
+                            .emit(SingularHelper.Constants.DID_SET_SDID_HANDLER_CONST, result);
                 }
 
                 @Override
                 public void sdidReceived(String result) {
                     reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                            .emit("SdidReceivedCallback", result);
+                            .emit(SingularHelper.Constants.SDID_RECEIVED_HANDLER_CONST, result);
                 }
             });
 
@@ -509,7 +504,6 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
         currentIntentHash = intent.hashCode();
 
         if (intent.getData() != null && singularLinkHandler != null) {
-            // We want to trigger the singular link handler only if it's registered
             config.withSingularLink(intent, singularLinkHandler);
         }
 
@@ -517,7 +511,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             config.withPushNotificationPayload(intent, pushNotificationsLinkPaths);
         }
 
-        Singular.init(reactContext, config);
+        SingularHelper.initWithSingularConfig(reactContext, config);
     }
 
     @ReactMethod
@@ -533,7 +527,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             e.printStackTrace();
         }
 
-        Singular.createReferrerShortLink(baseLink,
+        SingularHelper.createReferrerShortLink(baseLink,
                 referrerName,
                 referrerId,
                 params,
@@ -545,7 +539,7 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                         params.putString("error", "");
                         reactContext.
                                 getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                                .emit(Constants.SHORT_LINK_HANDLER_CONST, params);
+                                .emit(SingularHelper.Constants.SHORT_LINK_HANDLER_CONST, params);
 
                     }
 
@@ -556,26 +550,16 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
                         params.putString("error", error);
                         reactContext.
                                 getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                                .emit(Constants.SHORT_LINK_HANDLER_CONST, params);
+                                .emit(SingularHelper.Constants.SHORT_LINK_HANDLER_CONST, params);
                     }
                 });
     }
 
-    private boolean isValidNonEmptyString(String nullableJavascriptString) {
-        return nullableJavascriptString != null
-                && nullableJavascriptString instanceof String
-                && nullableJavascriptString.length() > 0
-                && !nullableJavascriptString.toLowerCase().equals("null")
-                && !nullableJavascriptString.toLowerCase().equals("undefined")
-                && !nullableJavascriptString.toLowerCase().equals("false")
-                && !nullableJavascriptString.equals("NaN");
-    }
-    
     @ReactMethod
     public void addListener(String eventName) {
         // Keep: Required for RN built in Event Emitter Calls.
     }
-    
+
     @ReactMethod
     public void removeListeners(Integer count) {
         // Keep: Required for RN built in Event Emitter Calls.

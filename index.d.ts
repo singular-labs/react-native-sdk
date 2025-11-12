@@ -21,7 +21,7 @@ export class SingularConfig {
     withClipboardAttribution(): SingularConfig;
     withManualSkanConversionManagement(): SingularConfig;
     withConversionValueUpdatedHandler(handler: (value: number) => void): SingularConfig;
-    withConversionValuesUpdatedHandler(handler: (fineValue: number, coarseValue: number, lockWindow: boolean) => void): SingularConfig;
+    withConversionValuesUpdatedHandler(handler: (updatedValues: SerializableObject) => void): SingularConfig;
     withWaitForTrackingAuthorizationWithTimeoutInterval(interval: number): SingularConfig;
     withShortLinkResolveTimeout(shortLinkResolveTimeout: number): SingularConfig;
     withLimitDataSharing(shouldLimitDataSharing: boolean): SingularConfig;
@@ -31,7 +31,7 @@ export class SingularConfig {
     withLogLevel(level: number): SingularConfig;
     withEspDomains(domains: [string]) : SingularConfig;
     withFacebookAppId(appId: string): SingularConfig;
-    withDeviceAttributionCallbackHandler(deviceAttributionCallbackHandler:(attributes: Map<string, any>) => void): SingularConfig;
+    withDeviceAttributionCallbackHandler(deviceAttributionCallbackHandler:(attributes: SerializableObject) => void): SingularConfig;
     withCustomSdid(customSdid: string, didSetSdidCallback: (result: string) => void, sdidReceivedCallback: (result: string) => void): SingularConfig;
     withPushNotificationsLinkPaths(pushNotificationsLinkPaths: [[string]]) : SingularConfig;
     withBrandedDomains(domains: [string]) : SingularConfig;
@@ -68,8 +68,8 @@ export class Singular {
     static customRevenue(eventName: string, currency: string, amount: number): void;
     static customRevenueWithArgs(eventName: string, currency: string, amount: number, args: SerializableObject): void;
 
-    static inAppPurchase(eventName: string, purchase: SingularPurchase): void;
-    static inAppPurchaseWithArgs(eventName: string, purchase: SingularPurchase, args: SerializableObject): void;
+    static inAppPurchase(eventName: string, purchase: SingularPurchase | any): void;
+    static inAppPurchaseWithArgs(eventName: string, purchase: SingularPurchase | any, args: SerializableObject): void;
 
     static setUninstallToken(token: string): void;
 
@@ -79,7 +79,7 @@ export class Singular {
     static resumeAllTracking(): void;
     static isAllTrackingStopped(): boolean;
 
-    static limitDataSharing(shoudlLimitDataSharing: boolean): void;
+    static limitDataSharing(shouldLimitDataSharing: boolean): void;
     static getLimitDataSharing(): boolean;
 
     static setGlobalProperty(key: string, value: string, overrideExisting: boolean): boolean;
@@ -94,14 +94,9 @@ export class Singular {
     
     static createReferrerShortLink(baseLink: string, referrerName: string, referrerId: string, passthroughParams: SerializableObject, completionHandler: (result: string, error: string) => void): void;
 
-    static adRevenue(adData: SingularAdData): void;
-    
-    static setGlobalProperty(key: string, value: string, overrideExisting: boolean): boolean;
-    static unsetGlobalProperty(key: string): void;
-    static clearGlobalProperties(): void;
-    static getGlobalProperties(): Map<string, string>;
+    static adRevenue(adData: SingularAdData | any): void;
 
-    static handlePushNotification(pushNotificationPayload: boolean): void;
+    static handlePushNotification(pushNotificationPayload: SerializableObject): void;
     static setLimitAdvertisingIdentifiers(enabled: boolean): void;
 }
 

@@ -17,13 +17,7 @@
 #import “RCTEventDispatcher.h”
 #endif
 
-#define SINGULAR_LINK_HANDLER_CONST                 @"SingularLinkHandler"
-#define CONVERSION_VALUE_UPDATED_HANDLER_CONST      @"ConversionValueUpdatedHandler"
-#define DEVICE_ATTRIBUTION_CALLBACK_HANDLER_CONST   @"DeviceAttributionCallbackHandler"
-#define CONVERSION_VALUES_UPDATED_HANDLER_CONST     @"ConversionValuesUpdatedHandler"
-#define SHORT_LINK_HANDLER_CONST                    @"ShortLinkHandler"
-#define SDID_RECEIVED_CALLBACK_CONST                @"SdidReceivedCallback"
-#define SDID_SET_CALLBACK_CONST                     @"DidSetSdidCallback"
+#import "SingularHelper.h"
 
 @implementation SingularBridge
 @synthesize bridge = _bridge;
@@ -46,24 +40,18 @@ static RCTEventEmitter* eventEmitter;
                    withKey:secret
            andUserActivity:userActivity
    withSingularLinkHandler:^(SingularLinkParams * params){
-        [SingularBridge handleSingularLink:params];
-    }];
+       [SingularBridge handleSingularLink:params];
+   }];
 }
 
 RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[SINGULAR_LINK_HANDLER_CONST,
-             CONVERSION_VALUE_UPDATED_HANDLER_CONST,
-             SHORT_LINK_HANDLER_CONST,
-             CONVERSION_VALUES_UPDATED_HANDLER_CONST,
-             DEVICE_ATTRIBUTION_CALLBACK_HANDLER_CONST,
-             SDID_RECEIVED_CALLBACK_CONST,
-             SDID_SET_CALLBACK_CONST];
+    return [SingularHelper supportedEvents];
 }
 
 // Init method using a json string representing the config
-RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
+RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig) {
     NSDictionary* singularConfigDict = [SingularBridge jsonToDictionary:jsonSingularConfig];
 
     apikey = [singularConfigDict objectForKey:@"apikey"];
@@ -85,10 +73,10 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     // Global Properties fields
     NSDictionary* globalProperties = [singularConfigDict objectForKey:@"globalProperties"];
     if (globalProperties && [globalProperties count] > 0){
-         for (NSDictionary* property in [globalProperties allValues]) {
-             [singularConfig setGlobalProperty:[property objectForKey:@"Key"]
-                                     withValue:[property objectForKey:@"Value"]
-                              overrideExisting:[[property objectForKey:@"OverrideExisting"] boolValue]];
+        for (NSDictionary* property in [globalProperties allValues]) {
+            [singularConfig setGlobalProperty:[property objectForKey:@"Key"]
+                                    withValue:[property objectForKey:@"Value"]
+                             overrideExisting:[[property objectForKey:@"OverrideExisting"] boolValue]];
         }
     }
 
@@ -102,9 +90,9 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     singularConfig.conversionValuesUpdatedCallback = ^(NSNumber *fineValue, NSNumber *coarseValue, BOOL lockWindow) {
         [SingularBridge handleConversionValuesUpdated:fineValue andCoarseValue:coarseValue andLockWindow:lockWindow];
     };
-    
+
     singularConfig.waitForTrackingAuthorizationWithTimeoutInterval =
-        [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
+            [[singularConfigDict objectForKey:@"waitForTrackingAuthorizationWithTimeoutInterval"] intValue];
 
     singularConfig.enableOdmWithTimeoutInterval =
             [[singularConfigDict objectForKey:@"enableOdmWithTimeoutInterval"] intValue];
@@ -112,30 +100,30 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     singularConfig.deviceAttributionCallback = ^(NSDictionary *deviceAttributionData) {
         [SingularBridge handleDeviceAttributionData:deviceAttributionData];
     };
-    
+
     NSString* customUserId = [singularConfigDict objectForKey:@"customUserId"];
 
     if (customUserId) {
-        [Singular setCustomUserId:customUserId];
+        [SingularHelper setCustomUserId:customUserId];
     }
 
     NSNumber* limitDataSharing = [singularConfigDict objectForKey:@"limitDataSharing"];
 
     if (![limitDataSharing isEqual:[NSNull null]]) {
-        [Singular limitDataSharing:[limitDataSharing boolValue]];
+        [SingularHelper limitDataSharing:[limitDataSharing boolValue]];
     }
 
     NSNumber* sessionTimeout = [singularConfigDict objectForKey:@"sessionTimeout"];
 
     if ([sessionTimeout intValue] >= 0) {
-        [Singular setSessionTimeout:[sessionTimeout intValue]];
+        [SingularHelper setSessionTimeout:[sessionTimeout intValue]];
     }
 
     NSString *customSdid = [singularConfigDict objectForKey:@"customSdid"];
     if (![SingularBridge isValidNonEmptyString:customSdid]) {
         customSdid = nil;
     }
-    
+
     singularConfig.customSdid = customSdid;
 
     singularConfig.sdidReceivedHandler = ^(NSString *result) {
@@ -145,7 +133,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
     singularConfig.didSetSdidHandler = ^(NSString *result) {
         [eventEmitter sendEventWithName:SDID_SET_CALLBACK_CONST body:result];
     };
-    
+
     // push
     singularConfig.pushNotificationLinkPath = [singularConfigDict objectForKey:@"pushNotificationsLinkPaths"];
 
@@ -153,43 +141,43 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig){
 
     eventEmitter = self;
 
-    [Singular start:singularConfig];
+    [SingularHelper initWithConfig:singularConfig];
 }
 
 RCT_EXPORT_METHOD(createReferrerShortLink:(NSString *)baseLink
-                  referrerName:(NSString *)referrerName
-                  referrerId:(NSString *)referrerId
-                  passthroughParams:(NSString *)args){
-    [Singular createReferrerShortLink:baseLink
+        referrerName:(NSString *)referrerName
+        referrerId:(NSString *)referrerId
+        passthroughParams:(NSString *)args){
+    [SingularHelper createReferrerShortLink:baseLink
                          referrerName:referrerName
                            referrerId:referrerId
                     passthroughParams:[SingularBridge jsonToDictionary:args]
-                    completionHandler:^(NSString *data, NSError *error) {
-                            [eventEmitter sendEventWithName:SHORT_LINK_HANDLER_CONST body:@{
-                                @"data": data? data: @"",
-                                @"error": error ? error.description: @""
-                            }];
-    }];
+                    completionHandler:^(NSString *data, NSString *error) {
+        [eventEmitter sendEventWithName:SHORT_LINK_HANDLER_CONST body:@{
+                                @"data": data ? data: @"",
+                                @"error": error ? error: @""
+                        }];
+                    }];
 }
 
 RCT_EXPORT_METHOD(setCustomUserId:(NSString*)customUserId){
-    [Singular setCustomUserId:customUserId];
+    [SingularHelper setCustomUserId:customUserId];
 }
 
 RCT_EXPORT_METHOD(unsetCustomUserId){
-    [Singular unsetCustomUserId];
+    [SingularHelper unsetCustomUserId];
 }
 
 RCT_EXPORT_METHOD(setDeviceCustomUserId:(NSString*)customUserId){
-    [Singular setDeviceCustomUserId:customUserId];
+    [SingularHelper setDeviceCustomUserId:customUserId];
 }
 
 RCT_EXPORT_METHOD(event:(NSString*)eventName){
-    [Singular event:eventName];
+    [SingularHelper event:eventName];
 }
 
 RCT_EXPORT_METHOD(eventWithArgs:(NSString*)eventName args:(NSString*)args){
-    [Singular event:eventName withArgs:[SingularBridge jsonToDictionary:args]];
+    [SingularHelper eventWithArgs:eventName args:[SingularBridge jsonToDictionary:args]];
 }
 
 RCT_EXPORT_METHOD(revenue:(NSString*)currency amount:(double)amount){
@@ -201,91 +189,91 @@ RCT_EXPORT_METHOD(revenueWithArgs:(NSString*)currency amount:(double)amount args
 }
 
 RCT_EXPORT_METHOD(customRevenue:(NSString*)eventName currency:(NSString*)currency amount:(double)amount){
-    [Singular customRevenue:eventName currency:currency amount:amount];
+    [SingularHelper customRevenue:eventName currency:currency amount:amount];
 }
 
 RCT_EXPORT_METHOD(customRevenueWithArgs:(NSString*)eventName currency:(NSString*)currency amount:(double)amount args:(NSString*)args){
-    [Singular customRevenue:eventName currency:currency amount:amount withAttributes:[SingularBridge jsonToDictionary:args]];
+    [SingularHelper customRevenueWithArgs:eventName currency:currency amount:amount args:[SingularBridge jsonToDictionary:args]];
 }
 
 RCT_EXPORT_METHOD(setUninstallToken:(NSString*)token){
     NSData *tokenData = [SingularBridge convertHexStringToDataBytes:token];
     if (tokenData) {
-        [Singular registerDeviceTokenForUninstall:tokenData];
+        [SingularHelper setUninstallToken:token];
     }
 }
 
 RCT_EXPORT_METHOD(trackingOptIn){
-    [Singular trackingOptIn];
+    [SingularHelper trackingOptIn];
 }
 
 RCT_EXPORT_METHOD(trackingUnder13){
-    [Singular trackingUnder13];
+    [SingularHelper trackingUnder13];
 }
 
 RCT_EXPORT_METHOD(stopAllTracking){
-    [Singular stopAllTracking];
+    [SingularHelper stopAllTracking];
 }
 
 RCT_EXPORT_METHOD(resumeAllTracking){
-    [Singular resumeAllTracking];
+    [SingularHelper resumeAllTracking];
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(isAllTrackingStopped){
-    return [Singular isAllTrackingStopped] ? @YES : @NO;
+    return [SingularHelper isAllTrackingStopped] ? @YES : @NO;
 }
 
 RCT_EXPORT_METHOD(limitDataSharing:(BOOL)limitDataSharingValue){
-    [Singular limitDataSharing:limitDataSharingValue];
+    [SingularHelper limitDataSharing:limitDataSharingValue];
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getLimitDataSharing){
-    return [Singular getLimitDataSharing] ? @YES : @NO;
+    return [SingularHelper getLimitDataSharing] ? @YES : @NO;
 }
 
 RCT_EXPORT_METHOD(setReactSDKVersion:(NSString*)wrapper version:(NSString*)version){
-    [Singular setWrapperName:wrapper andVersion:version];
+    [SingularHelper setReactSDKVersion:wrapper version:version];
 }
 
 // export SKAN methods
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanUpdateConversionValue:(NSInteger)conversionValue){
-    return [Singular skanUpdateConversionValue:conversionValue] ? @YES : @NO;
+    return [SingularHelper skanUpdateConversionValue:conversionValue] ? @YES : @NO;
 }
 
 RCT_EXPORT_METHOD(skanUpdateConversionValues:(NSInteger)conversionValue coarse:(NSInteger)coarse lock:(BOOL)lock){
-    [Singular skanUpdateConversionValue:conversionValue coarse:coarse lock:lock];
+    [SingularHelper skanUpdateConversionValues:conversionValue coarse:coarse lock:lock];
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(skanGetConversionValue){
-    return [Singular skanGetConversionValue];
+    return [SingularHelper skanGetConversionValue];
 }
 
 RCT_EXPORT_METHOD(skanRegisterAppForAdNetworkAttribution){
-    [Singular skanRegisterAppForAdNetworkAttribution];
+    [SingularHelper skanRegisterAppForAdNetworkAttribution];
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(setGlobalProperty:(NSString *)key value:(NSString *)value overrideExisting:(BOOL)overrideExisting) {
-    return [Singular setGlobalProperty:key andValue:value overrideExisting:overrideExisting] ? @YES : @NO;
+    return [SingularHelper setGlobalProperty:key value:value overrideExisting:overrideExisting] ? @YES : @NO;
 }
 
 RCT_EXPORT_METHOD(unsetGlobalProperty:(NSString *) key) {
-    [Singular unsetGlobalProperty:key];
+    [SingularHelper unsetGlobalProperty:key];
 }
 
 RCT_EXPORT_METHOD(clearGlobalProperties) {
-    [Singular clearGlobalProperties];
+    [SingularHelper clearGlobalProperties];
 }
 
 RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getGlobalProperties) {
-    return [Singular getGlobalProperties];
+    return [SingularHelper getGlobalProperties];
 }
 
 RCT_EXPORT_METHOD(handlePushNotification:(NSDictionary *)pushNotificationPayload) {
-    [Singular handlePushNotification:pushNotificationPayload];
+    [SingularHelper handlePushNotification:pushNotificationPayload];
 }
 
 RCT_EXPORT_METHOD(setLimitAdvertisingIdentifiers:(BOOL)enabled) {
-    [Singular setLimitAdvertisingIdentifiers:enabled];
+    [SingularHelper setLimitAdvertisingIdentifiers:enabled];
 }
 
 #pragma mark - Private methods
@@ -311,10 +299,10 @@ RCT_EXPORT_METHOD(setLimitAdvertisingIdentifiers:(BOOL)enabled) {
 +(void)handleSingularLink:(SingularLinkParams*)params {
     // Raising the Singular Link handler in the react-native code
     [eventEmitter sendEventWithName:SINGULAR_LINK_HANDLER_CONST body:@{
-        @"deeplink": [params getDeepLink] ? [params getDeepLink] : @"",
-        @"passthrough": [params getPassthrough] ? [params getPassthrough] : @"",
-        @"isDeferred": [params isDeferred] ? @YES : @NO,
-        @"urlParameters": [params getUrlParameters] ? [params getUrlParameters] : @{ }
+            @"deeplink": [params getDeepLink] ? [params getDeepLink] : @"",
+            @"passthrough": [params getPassthrough] ? [params getPassthrough] : @"",
+            @"isDeferred": [params isDeferred] ? @YES : @NO,
+            @"urlParameters": [params getUrlParameters] ? [params getUrlParameters] : @{ }
     }];
 
 }
@@ -332,7 +320,7 @@ RCT_EXPORT_METHOD(setLimitAdvertisingIdentifiers:(BOOL)enabled) {
 +(void)handleConversionValuesUpdated:(NSNumber *)fineValue andCoarseValue:(NSNumber *)coarseValue andLockWindow:(BOOL)lockWindow {
     NSInteger fine = -1;
     NSInteger coarse = -1;
-    
+
     if (fineValue != nil) {
         fine = [fineValue intValue];
     }
@@ -341,9 +329,9 @@ RCT_EXPORT_METHOD(setLimitAdvertisingIdentifiers:(BOOL)enabled) {
     }
 
     [eventEmitter sendEventWithName:CONVERSION_VALUES_UPDATED_HANDLER_CONST body:@{
-        @"conversionValue": @(fine),
-        @"coarse": @(coarse),
-        @"lock": @(lockWindow)
+            @"conversionValue": @(fine),
+            @"coarse": @(coarse),
+            @"lock": @(lockWindow)
     }];
 }
 
@@ -365,19 +353,19 @@ RCT_EXPORT_METHOD(setLimitAdvertisingIdentifiers:(BOOL)enabled) {
         wholeByte = strtoul(byteChars, NULL, 16);
         [data appendBytes:&wholeByte length:1];
     }
-    
+
     return data;
 }
 
 + (BOOL)isValidNonEmptyString:(NSString *)nullableJavascriptString {
     return nullableJavascriptString != nil
-    && ![nullableJavascriptString isEqual:[NSNull null]]
-    && [nullableJavascriptString isKindOfClass:NSString.class]
-    && nullableJavascriptString.length > 0
-    && ![nullableJavascriptString.lowercaseString isEqualToString:@"null"]
-    && ![nullableJavascriptString.lowercaseString isEqualToString:@"undefined"]
-    && ![nullableJavascriptString.lowercaseString isEqualToString:@"false"]
-    && ![nullableJavascriptString isEqualToString:@"NaN"];
+           && ![nullableJavascriptString isEqual:[NSNull null]]
+           && [nullableJavascriptString isKindOfClass:NSString.class]
+           && nullableJavascriptString.length > 0
+           && ![nullableJavascriptString.lowercaseString isEqualToString:@"null"]
+           && ![nullableJavascriptString.lowercaseString isEqualToString:@"undefined"]
+           && ![nullableJavascriptString.lowercaseString isEqualToString:@"false"]
+           && ![nullableJavascriptString isEqualToString:@"NaN"];
 }
 
 @end
