@@ -250,10 +250,10 @@ RCT_EXPORT_MODULE(SingularBridge);
     adRevenueData[kAdPlatform] = adData.ad_platform();
     adRevenueData[kAdCurrency] = adData.ad_currency();
     adRevenueData[kAdRevenue] = @(adData.ad_revenue());
-    adRevenueData[kAdRevenueR] = @(adData.r());
-    adRevenueData[kAdRevenuePCC] = adData.pcc();
-    adRevenueData[kIsAdmonRevenue] = @(adData.is_admon_revenue());
-    adRevenueData[kIsRevenueEvent] = @(adData.is_revenue_event());
+    adRevenueData[kAdRevenueR] = @(adData.ad_revenue());
+    adRevenueData[kAdRevenuePCC] = adData.ad_currency();
+    adRevenueData[kIsAdmonRevenue] = @(YES);
+    adRevenueData[kIsRevenueEvent] = @(YES);
 
     if (adData.ad_mediation_platform()) {
         adRevenueData[kAdMediationPlatform] = adData.ad_mediation_platform();
