@@ -25,15 +25,12 @@ Pod::Spec.new do |spec|
   if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
     spec.compiler_flags = "-DRCT_NEW_ARCH_ENABLED=1"
     spec.pod_target_xcconfig = {
-      'HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/boost" "${PODS_TARGET_SRCROOT}/../../ios/build/generated/ios"',
+      'HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/boost"',
       "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
       "CLANG_CXX_LIBRARY" => "libc++",
       "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_CFG_NO_COROUTINES=1"
     }
     spec.dependency "React-Codegen"
-    spec.dependency "RCT-Folly"
-    spec.dependency "RCTRequired"
-    spec.dependency "RCTTypeSafety"
     spec.dependency "ReactCommon/turbomodule/core"
   else
     spec.compiler_flags = "-DRCT_NEW_ARCH_ENABLED=0"

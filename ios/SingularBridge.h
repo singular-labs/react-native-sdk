@@ -8,8 +8,13 @@
 
 #if RCT_NEW_ARCH_ENABLED
 #import <ReactCommon/RCTTurboModule.h>
+#if __has_include(<NativeSingular/NativeSingular.h>)
 #import <NativeSingular/NativeSingular.h>
+#else
+#import "NativeSingular.h"
 #endif
+#endif
+
 
 #if RCT_NEW_ARCH_ENABLED
 @interface SingularBridge : RCTEventEmitter <NativeSingularSpec>
