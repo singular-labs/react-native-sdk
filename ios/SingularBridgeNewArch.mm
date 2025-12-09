@@ -6,9 +6,7 @@
 #import <Singular/SingularLinkParams.h>
 
 #if RCT_NEW_ARCH_ENABLED
-#import "NativeSingular.h"
 #import "NativeSingularJSI.h"
-#import <ReactCommon/RCTTurboModule.h>
 #endif
 
 @implementation SingularBridge
@@ -19,7 +17,7 @@ static NSString *apikey;
 static NSString *secret;
 static NSDictionary *launchOptions;
 
-static NSString* const version = @"4.0.0";
+static NSString* const version = @"4.1.0";
 static NSString* const wrapper = @"ReactNative";
 
 // Ad Revenue key constants

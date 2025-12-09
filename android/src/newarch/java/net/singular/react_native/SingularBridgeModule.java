@@ -30,7 +30,7 @@ import com.singular.sdk.ShortLinkHandler;
 
 public class SingularBridgeModule extends NativeSingularSpec {
     public static final String NAME = "SingularBridge";
-    private static final String version = "4.0.0";
+    private static final String version = "4.1.0";
     private static final String wrapper = "ReactNative";
 
     private static SingularConfig config;
