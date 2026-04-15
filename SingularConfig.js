@@ -1,3 +1,5 @@
+import {Platform} from 'react-native';
+
 export class SingularConfig {
     apikey;
     secret;
@@ -23,6 +25,7 @@ export class SingularConfig {
     globalProperties;
     collectOAID
     enableLogging;
+    logLevel;
     espDomains;
     facebookAppId;
 
@@ -38,6 +41,7 @@ export class SingularConfig {
     brandedDomains;
     
     limitAdvertisingIdentifiers;
+    ddlTimeoutSec; // android only
 
     constructor(apikey, secret) {
         this.apikey = apikey;
@@ -174,4 +178,12 @@ export class SingularConfig {
         return this;
     }
 
+    withDDLTimeoutInSec(ddlTimeoutSec) {
+        if (Platform.OS === 'android') {
+            this.ddlTimeoutSec = ddlTimeoutSec;
+        } else {
+            console.log('[Singular SDK] withDDLTimeoutInSec is Android-only, skipping on', Platform.OS);
+        }
+        return this;
+    }
 }

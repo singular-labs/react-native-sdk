@@ -276,6 +276,10 @@ RCT_EXPORT_METHOD(setLimitAdvertisingIdentifiers:(BOOL)enabled) {
     [SingularHelper setLimitAdvertisingIdentifiers:enabled];
 }
 
+RCT_EXPORT_METHOD(setDeferredDeepLinkTimeout:(NSInteger)duration) {
+    [SingularHelper setDeferredDeepLinkTimeout:duration];
+}
+
 #pragma mark - Private methods
 
 +(NSDictionary*)jsonToDictionary:(NSString*)json{

@@ -275,26 +275,32 @@ export class Singular {
         if (Platform.OS === 'ios') {
             return SingularBridge.skanUpdateConversionValue(conversionValue);
         }
+        console.log('[Singular SDK] skanUpdateConversionValue is iOS-only, skipping on', Platform.OS);
         return true
     }
 
     static skanUpdateConversionValues(conversionValue, coarse, lock) {
         if (Platform.OS === 'ios') {
             SingularBridge.skanUpdateConversionValues(conversionValue, coarse, lock);
+            return;
         }
+        console.log('[Singular SDK] skanUpdateConversionValues is iOS-only, skipping on', Platform.OS);
     }
 
     static skanGetConversionValue() {
         if (Platform.OS === 'ios') {
             return SingularBridge.skanGetConversionValue();
         }
+        console.log('[Singular SDK] skanGetConversionValue is iOS-only, skipping on', Platform.OS);
         return null
     }
 
     static skanRegisterAppForAdNetworkAttribution() {
         if (Platform.OS === 'ios') {
             SingularBridge.skanRegisterAppForAdNetworkAttribution();
+            return;
         }
+        console.log('[Singular SDK] skanRegisterAppForAdNetworkAttribution is iOS-only, skipping on', Platform.OS);
     }
 
     static adRevenue(adData) {
@@ -341,11 +347,21 @@ export class Singular {
     static handlePushNotification(pushNotificationPayload) {
         if (Platform.OS === 'ios') {
            SingularBridge.handlePushNotification(pushNotificationPayload);
+           return;
         }
+        console.log('[Singular SDK] handlePushNotification is iOS-only, skipping on', Platform.OS);
     }
 
     static setLimitAdvertisingIdentifiers(enabled) {
         SingularBridge.setLimitAdvertisingIdentifiers(enabled);
+    }
+
+    static setDeferredDeepLinkTimeout(duration) {
+        if (Platform.OS === 'ios') {
+           SingularBridge.setDeferredDeepLinkTimeout(duration);
+           return;
+        }
+        console.log('[Singular SDK] setDeferredDeepLinkTimeout is iOS-only, skipping on', Platform.OS);
     }
 }
 

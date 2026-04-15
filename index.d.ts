@@ -37,6 +37,7 @@ export class SingularConfig {
     withBrandedDomains(domains: [string]) : SingularConfig;
     withLimitAdvertisingIdentifiers(limitAdvertisingIdentifiers: boolean): SingularConfig;
     withEnableOdmWithTimeoutInterval(enableOdmWithTimeoutInterval: number) : SingularConfig;
+    withDDLTimeoutInSec(ddlTimeoutSec: number) : SingularConfig;
 }
 
 export class SingularPurchase {
@@ -98,6 +99,7 @@ export class Singular {
 
     static handlePushNotification(pushNotificationPayload: SerializableObject): void;
     static setLimitAdvertisingIdentifiers(enabled: boolean): void;
+    static setDeferredDeepLinkTimeout(duration: number): void;
 }
 
 export class SingularAdData {

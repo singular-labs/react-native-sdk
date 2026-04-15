@@ -30,7 +30,7 @@ import com.singular.sdk.ShortLinkHandler;
 
 public class SingularBridgeModule extends NativeSingularSpec {
     public static final String NAME = "SingularBridge";
-    private static final String version = "4.1.0";
+    private static final String version = "4.2.0";
     private static final String wrapper = "ReactNative";
 
     private static SingularConfig config;
@@ -380,32 +380,36 @@ public class SingularBridgeModule extends NativeSingularSpec {
 
     // iOS-specific methods (no-op on Android, but required for Codegen)
     @Override
-    public boolean skanUpdateConversionValue(double conversionValue) {
-        // SKAdNetwork is iOS-only, no-op on Android
-        return false;
-    }
+       public boolean skanUpdateConversionValue(double conversionValue) {
+           Log.i("SingularSDK", "skanUpdateConversionValue is iOS-only, no-op on Android.");
+           return false;
+       }
 
-    @Override
-    public void skanUpdateConversionValues(double conversionValue, double coarse, boolean lock) {
-        // SKAdNetwork is iOS-only, no-op on Android
-    }
+       @Override
+       public void skanUpdateConversionValues(double conversionValue, double coarse, boolean lock) {
+           Log.i("SingularSDK", "skanUpdateConversionValues is iOS-only, no-op on Android.");
+       }
 
-    @Override
-    public Double skanGetConversionValue() {
-        // SKAdNetwork is iOS-only, return null on Android
-        return null;
-    }
+       @Override
+       public Double skanGetConversionValue() {
+           Log.i("SingularSDK", "skanGetConversionValue is iOS-only, returning null on Android.");
+           return null;
+       }
 
-    @Override
-    public void skanRegisterAppForAdNetworkAttribution() {
-        // SKAdNetwork is iOS-only, no-op on Android
-    }
+       @Override
+       public void skanRegisterAppForAdNetworkAttribution() {
+           Log.i("SingularSDK", "skanRegisterAppForAdNetworkAttribution is iOS-only, no-op on Android.");
+       }
 
-    @Override
-    public void handlePushNotification(ReadableMap pushNotificationPayload) {
-        // Push notification handling is iOS-specific, no-op on Android
-        // Android handles push notifications differently
-    }
+       @Override
+       public void handlePushNotification(ReadableMap pushNotificationPayload) {
+           Log.i("SingularSDK", "handlePushNotification is iOS-only, no-op on Android.");
+       }
+
+       @Override
+       public void setDeferredDeepLinkTimeout(double duration) {
+           Log.i("SingularSDK", "setDeferredDeepLinkTimeout is iOS-only, no-op on Android. Use withDDLTimeoutInSec in config instead.");
+       }
 
     private SDIDAccessorHandler createSdidHandler() {
         return new SDIDAccessorHandler() {

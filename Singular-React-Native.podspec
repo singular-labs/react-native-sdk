@@ -16,24 +16,14 @@ Pod::Spec.new do |spec|
     spec.source_files = "ios/SingularBridge.h", "ios/SingularBridgeOldArch.m", "ios/SingularHelper.h", "ios/SingularHelper.m"
   end
   spec.platform         = :ios, "12.0"
-  spec.dependency 'Singular-SDK', '12.9.0'
+  spec.dependency 'Singular-SDK', '12.10.1'
   spec.static_framework = true
 
-  spec.dependency 'React'
-
-  # New Architecture support
-  if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
-    spec.compiler_flags = "-DRCT_NEW_ARCH_ENABLED=1"
-    spec.pod_target_xcconfig = {
-      'HEADER_SEARCH_PATHS' => '"$(PODS_ROOT)/boost"',
-      "CLANG_CXX_LANGUAGE_STANDARD" => "c++17",
-      "CLANG_CXX_LIBRARY" => "libc++",
-      "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_CFG_NO_COROUTINES=1"
-    }
-    spec.dependency "React-Codegen"
-    spec.dependency "ReactCommon/turbomodule/core"
+  # RN 0.71+ dependency setup.this handles both architectures, fallback for older versions
+  if respond_to?(:install_modules_dependencies, true)
+    install_modules_dependencies(spec)
   else
-    spec.compiler_flags = "-DRCT_NEW_ARCH_ENABLED=0"
+    spec.dependency "React"
   end
 end
 

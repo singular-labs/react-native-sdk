@@ -1,13 +1,5 @@
 import { TurboModule, TurboModuleRegistry } from 'react-native';
 
-export type SerializableValue = boolean | number | string | null | SerializableArray | SerializableObject;
-
-export type SerializableArray = Array<SerializableValue>;
-
-export type SerializableObject = {
-  [key: string]: SerializableValue;
-};
-
 export interface SingularLinkParams {
     deeplink: string;
     passthrough: string;
@@ -54,7 +46,7 @@ export interface SingularConfig {
   waitForTrackingAuthorizationWithTimeoutInterval?: number;
   customSdid?: string;
   limitDataSharing?: boolean | null;
-  globalProperties?: SerializableObject;
+  globalProperties?: Object;
   collectOAID?: boolean;
   enableLogging?: boolean;
   espDomains?: string[];
@@ -63,6 +55,8 @@ export interface SingularConfig {
   brandedDomains?: string[];
   limitAdvertisingIdentifiers?: boolean;
   enableOdmWithTimeoutInterval?: number;
+  ddlTimeoutSec?: number; //android only
+  logLevel?: number;
 }
 
 export interface Spec extends TurboModule {
@@ -73,19 +67,19 @@ export interface Spec extends TurboModule {
     removeListeners(count: number): void;
 
     event(eventName: string): void;
-    eventWithArgs(eventName: string, args: SerializableObject): void;
+    eventWithArgs(eventName: string, args: Object): void;
 
     setCustomUserId(customUserId: string): void;
     unsetCustomUserId(): void;
     setDeviceCustomUserId(customUserId: string): void;
 
     revenue(currency: string, amount: number): void;
-    revenueWithArgs(currency: string, amount: number, args: SerializableObject): void;
+    revenueWithArgs(currency: string, amount: number, args: Object): void;
     customRevenue(eventName: string, currency: string, amount: number): void;
-    customRevenueWithArgs(eventName: string, currency: string, amount: number, args: SerializableObject): void;
+    customRevenueWithArgs(eventName: string, currency: string, amount: number, args: Object): void;
 
     inAppPurchase(eventName: string, purchase: SingularPurchase): void;
-    inAppPurchaseWithArgs(eventName: string, purchase: SingularPurchase, args: SerializableObject): void;
+    inAppPurchaseWithArgs(eventName: string, purchase: SingularPurchase, args: Object): void;
 
     setUninstallToken(token: string): void;
 
@@ -101,9 +95,9 @@ export interface Spec extends TurboModule {
     setGlobalProperty(key: string, value: string, overrideExisting: boolean): boolean;
     unsetGlobalProperty(key: string): void;
     clearGlobalProperties(): void;
-    getGlobalProperties(): SerializableObject;
+    getGlobalProperties(): Object;
 
-    createReferrerShortLink(baseLink: string, referrerName: string, referrerId: string, passthroughParams: SerializableObject, completionHandler: (result: string, error: string) => void): void;
+    createReferrerShortLink(baseLink: string, referrerName: string, referrerId: string, passthroughParams: Object, completionHandler: (result: string, error: string) => void): void;
 
     adRevenue(adData: SingularAdData): void;
 
@@ -114,7 +108,8 @@ export interface Spec extends TurboModule {
     skanUpdateConversionValues(conversionValue: number, coarse: number, lock: boolean): void;
     skanGetConversionValue(): number | null;
     skanRegisterAppForAdNetworkAttribution(): void;
-    handlePushNotification(pushNotificationPayload: SerializableObject): void;
+    handlePushNotification(pushNotificationPayload: Object): void;
+    setDeferredDeepLinkTimeout(duration: number): void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('SingularBridge');
