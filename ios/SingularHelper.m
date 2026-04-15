@@ -200,6 +200,10 @@
     }];
 }
 
++ (void)setDeferredDeepLinkTimeout:(int)duration {
+    [Singular setDeferredDeepLinkTimeout:duration];
+}
+
 #pragma mark - Helper Methods
 
 + (NSString *)dictionaryToJSONString:(NSDictionary *)dictionary {

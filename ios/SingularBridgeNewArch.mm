@@ -17,7 +17,7 @@ static NSString *apikey;
 static NSString *secret;
 static NSDictionary *launchOptions;
 
-static NSString* const version = @"4.1.0";
+static NSString* const version = @"4.2.0";
 static NSString* const wrapper = @"ReactNative";
 
 // Ad Revenue key constants
@@ -437,6 +437,10 @@ RCT_EXPORT_MODULE(SingularBridge);
 
 - (void)unsetGlobalProperty:(NSString *)key {
     [SingularHelper unsetGlobalProperty:key];
+}
+
+- (void)setDeferredDeepLinkTimeout:(double)duration {
+    [SingularHelper setDeferredDeepLinkTimeout:duration];
 }
 
 @end

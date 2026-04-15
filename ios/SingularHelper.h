@@ -66,5 +66,7 @@
 + (void)setReactSDKVersion:(NSString*)wrapper version:(NSString*)version;
 
 + (NSArray<NSString *> *)supportedEvents;
+
++ (void)setDeferredDeepLinkTimeout:(int)duration;
 @end
 
