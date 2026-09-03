@@ -43,6 +43,8 @@ export class SingularConfig {
     limitAdvertisingIdentifiers;
     ddlTimeoutSec; // android only
 
+    userDetails;
+
     constructor(apikey, secret) {
         this.apikey = apikey;
         this.secret = secret;
@@ -170,6 +172,11 @@ export class SingularConfig {
     
     withLimitAdvertisingIdentifiers(limitAdvertisingIdentifiers) {
         this.limitAdvertisingIdentifiers = limitAdvertisingIdentifiers;
+        return this;
+    }
+
+    withUserDetails(userDetails) {
+        this.userDetails = userDetails;
         return this;
     }
 

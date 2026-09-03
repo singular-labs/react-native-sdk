@@ -2,6 +2,7 @@ package net.singular.react_native;
 import com.singular.sdk.Singular;
 import com.singular.sdk.SingularConfig;
 import com.singular.sdk.ShortLinkHandler;
+import com.singular.sdk.SingularUserDetails;
 import org.json.JSONObject;
 import java.util.Map;
 import java.util.HashMap;
@@ -111,6 +112,54 @@ public class SingularHelper {
         return Singular.getGlobalProperties();
     }
     
+    public static void setUserDetails(SingularUserDetails userDetails) {
+        Singular.setUserDetails(userDetails);
+    }
+
+    public static void clearUserDetails() {
+        Singular.clearUserDetails();
+    }
+
+    public static SingularUserDetails buildUserDetails(JSONObject values) {
+        if (values == null) {
+            return null;
+        }
+
+        SingularUserDetails userDetails = new SingularUserDetails();
+
+        String email = values.optString("email", null);
+        if (isValidNonEmptyString(email)) {
+            userDetails.setEmail(email);
+        }
+
+        String phoneNumber = values.optString("phoneNumber", null);
+        if (isValidNonEmptyString(phoneNumber)) {
+            userDetails.setPhoneNumber(phoneNumber);
+        }
+
+        String emailSTD = values.optString("emailSTD", null);
+        if (isValidNonEmptyString(emailSTD)) {
+            userDetails.setEmailSTD(emailSTD);
+        }
+
+        String emailNoDots = values.optString("emailNoDots", null);
+        if (isValidNonEmptyString(emailNoDots)) {
+            userDetails.setEmailNoDots(emailNoDots);
+        }
+
+        String phoneE164 = values.optString("phoneE164", null);
+        if (isValidNonEmptyString(phoneE164)) {
+            userDetails.setPhoneE164(phoneE164);
+        }
+
+        String phoneDigits = values.optString("phoneDigits", null);
+        if (isValidNonEmptyString(phoneDigits)) {
+            userDetails.setPhoneDigits(phoneDigits);
+        }
+
+        return userDetails;
+    }
+
     public static void setLimitAdvertisingIdentifiers(boolean enabled) {
         Singular.setLimitAdvertisingIdentifiers(enabled);
     }

@@ -9,6 +9,31 @@
 #import "NativeSingularJSI.h"
 #endif
 
+static NSDictionary *SingularUserDetailsStructToDictionary(JS::NativeSingular::SingularUserDetails &userDetails) {
+    NSMutableDictionary *values = [NSMutableDictionary dictionary];
+
+    if (userDetails.email()) {
+        values[@"email"] = userDetails.email();
+    }
+    if (userDetails.phoneNumber()) {
+        values[@"phoneNumber"] = userDetails.phoneNumber();
+    }
+    if (userDetails.emailSTD()) {
+        values[@"emailSTD"] = userDetails.emailSTD();
+    }
+    if (userDetails.emailNoDots()) {
+        values[@"emailNoDots"] = userDetails.emailNoDots();
+    }
+    if (userDetails.phoneE164()) {
+        values[@"phoneE164"] = userDetails.phoneE164();
+    }
+    if (userDetails.phoneDigits()) {
+        values[@"phoneDigits"] = userDetails.phoneDigits();
+    }
+
+    return values;
+}
+
 @implementation SingularBridge
 
 static RCTEventEmitter* eventEmitter;
@@ -17,7 +42,10 @@ static NSString *apikey;
 static NSString *secret;
 static NSDictionary *launchOptions;
 
-static NSString* const version = @"4.2.0";
+static NSUserActivity *pendingUserActivity;
+static SingularConfig *currentConfig;
+
+static NSString* const version = @"4.3.0";
 static NSString* const wrapper = @"ReactNative";
 
 // Ad Revenue key constants
@@ -41,6 +69,7 @@ static NSString* const kAdGroupName = @"ad_group_name";
 static NSString* const kAdGroupPriority = @"ad_group_priority";
 static NSString* const kAdPrecision = @"ad_precision";
 static NSString* const kAdPlacementId = @"ad_placement_id";
+static NSString* const kSngAttrLimitDataSharing = @"sng_attr_limit_data_sharing";
 
 // Purchase key constants
 static NSString* const kPurchaseProductKey = @"pk";
@@ -59,22 +88,32 @@ RCT_EXPORT_MODULE(SingularBridge);
     launchOptions = options;
 }
 
-// Handling Singular Link when the app is opened from a Singular Link while it was in the background.
-// The client will need to call this method in the AppDelegate in continueUserActivity.
++(void)handleSingularLink:(SingularLinkParams*)params {
+    [eventEmitter sendEventWithName:SINGULAR_LINK_HANDLER_CONST body:@{
+        kSingularLinkDeeplink: [params getDeepLink] ?: @"",
+        kSingularLinkPassthrough: [params getPassthrough] ?: @"",
+        kSingularLinkIsDeferred: @([params isDeferred]),
+        kSingularLinkUrlParameters: [params getUrlParameters] ?: @{}
+    }];
+}
+
+// Handling a Singular Link delivered as a universal link, on both cold launch and warm resume.
+// call this method in the AppDelegate in continueUserActivity, or in the
+// SceneDelegate in scene:willConnectToSession:options: (cold) and scene:continueUserActivity: (warm).
 +(void)startSessionWithUserActivity:(NSUserActivity*)userActivity {
+    if (!currentConfig) {
+        pendingUserActivity = userActivity;
+        return;
+    }
+
+    // Warm resume: the SDK is already initialized, so start the session against the link now.
     [Singular startSession:apikey
                    withKey:secret
            andUserActivity:userActivity
    withSingularLinkHandler:^(SingularLinkParams * params) {
-        NSDictionary *linkData = @{
-            kSingularLinkDeeplink: [params getDeepLink] ? [params getDeepLink] : @"",
-            kSingularLinkPassthrough: [params getPassthrough] ? [params getPassthrough] : @"",
-            kSingularLinkIsDeferred: [params isDeferred] ? @YES : @NO,
-            kSingularLinkUrlParameters: [params getUrlParameters] ? [params getUrlParameters] : @{}
-        };
-        
-        [eventEmitter sendEventWithName:SINGULAR_LINK_HANDLER_CONST body:linkData];
-    }];
+       [SingularBridge handleSingularLink:params];
+   }
+andShortLinkResolveTimeout:currentConfig.shortLinkResolveTimeOut];
 }
 
 - (NSArray<NSString *> *)supportedEvents {
@@ -120,7 +159,12 @@ RCT_EXPORT_MODULE(SingularBridge);
     if (config.enableOdmWithTimeoutInterval().has_value()) {
         singularConfig.enableOdmWithTimeoutInterval = config.enableOdmWithTimeoutInterval().value();
     }
-    if (config.sessionTimeout().has_value()) {
+
+    [SingularHelper applyLoggingConfig:singularConfig
+                        enableLogging:config.enableLogging().has_value() ? config.enableLogging().value() : NO
+                             logLevel:config.logLevel().has_value() ? (NSInteger)config.logLevel().value() : -1];
+
+    if (config.sessionTimeout().has_value() && config.sessionTimeout().value() >= 0) {
         [SingularHelper setSessionTimeout:(int)config.sessionTimeout().value()];
     }
     if (config.limitDataSharing().has_value()) {
@@ -180,15 +224,14 @@ RCT_EXPORT_MODULE(SingularBridge);
         }
     }
     
+    if (config.userDetails().has_value()) {
+        auto userDetails = config.userDetails().value();
+        [SingularHelper applyUserDetails:SingularUserDetailsStructToDictionary(userDetails)
+                               toConfig:singularConfig];
+    }
+
     singularConfig.singularLinksHandler = ^(SingularLinkParams * _Nonnull params) {
-        NSDictionary *linkData = @{
-            kSingularLinkDeeplink: [params getDeepLink] ?: @"",
-            kSingularLinkPassthrough: [params getPassthrough] ?: @"",
-            kSingularLinkIsDeferred: @([params isDeferred]),
-            kSingularLinkUrlParameters: [params getUrlParameters] ?: @{}
-        };
-        
-        [self sendEventWithName:SINGULAR_LINK_HANDLER_CONST body:linkData];
+        [SingularBridge handleSingularLink:params];
     };
     
     singularConfig.sdidReceivedHandler = ^(NSString * _Nonnull sdid) {
@@ -228,7 +271,13 @@ RCT_EXPORT_MODULE(SingularBridge);
     };
     
     eventEmitter = self;
-    
+
+    singularConfig.userActivity = pendingUserActivity;
+    pendingUserActivity = nil;
+    launchOptions = nil;
+
+    currentConfig = singularConfig;
+
     [SingularHelper initWithConfig:singularConfig];
     [SingularHelper setReactSDKVersion:wrapper version:version];
 }
@@ -289,6 +338,9 @@ RCT_EXPORT_MODULE(SingularBridge);
     if (adData.ad_placement_id()) {
         adRevenueData[kAdPlacementId] = adData.ad_placement_id();
     }
+    if (adData.sng_attr_limit_data_sharing().has_value()) {
+        adRevenueData[kSngAttrLimitDataSharing] = @(adData.sng_attr_limit_data_sharing().value());
+    }
 
     [SingularHelper eventWithArgs:kAdRevenueEvent args:adRevenueData];
 }
@@ -323,6 +375,14 @@ RCT_EXPORT_MODULE(SingularBridge);
     [combinedArgs addEntriesFromDictionary:args];
 
     [SingularHelper eventWithArgs:eventName args:combinedArgs];
+}
+
+- (void)setUserDetails:(JS::NativeSingular::SingularUserDetails &)userDetails {
+    [SingularHelper setUserDetailsFromDictionary:SingularUserDetailsStructToDictionary(userDetails)];
+}
+
+- (void)clearUserDetails {
+    [SingularHelper clearUserDetails];
 }
 
 - (void)clearGlobalProperties {

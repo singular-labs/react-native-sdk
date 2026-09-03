@@ -14,6 +14,7 @@ const ADMON_AD_GROUP_NAME = 'ad_group_name';
 const ADMON_AD_GROUP_PRIORITY = 'ad_group_priority';
 const ADMON_PRECISION = 'ad_precision';
 const ADMON_PLACEMENT_ID = 'ad_placement_id';
+const LIMIT_DATA_SHARING_ARG_KEY = 'sng_attr_limit_data_sharing';
 const IS_REVENUE_EVENT_KEY = 'is_revenue_event';
 const REVENUE_AMOUNT_KEY = 'r';
 const REVENUE_CURRENCY_KEY = 'pcc';
@@ -91,6 +92,11 @@ export class SingularAdData {
 
     withAdUnitName(adUnitName) {
         this[ADMON_AD_UNIT_NAME] = adUnitName;
+        return this;
+    }
+
+    withLimitDataSharing(shouldLimitDataSharing) {
+        this[LIMIT_DATA_SHARING_ARG_KEY] = shouldLimitDataSharing;
         return this;
     }
 

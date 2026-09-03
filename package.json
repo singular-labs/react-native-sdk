@@ -1,6 +1,6 @@
 {
   "name": "singular-react-native",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "description": "Singular React Native SDK",
   "main": "index.js",
   "codegenConfig": {
@@ -30,6 +30,7 @@
     "Singular-React-Native.podspec",
     "Singular.js",
     "SingularAdData.js",
+    "SingularUserDetails.js",
     "SingularConfig.js",
     "SingularPurchase.js",
     "Attributes.js",

@@ -25,6 +25,7 @@ import com.singular.sdk.SingularDeviceAttributionHandler;
 import com.singular.sdk.SingularLinkHandler;
 import com.singular.sdk.SingularLinkParams;
 import com.singular.sdk.ShortLinkHandler;
+import com.singular.sdk.SingularUserDetails;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -176,6 +177,23 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void setUserDetails(String userDetailsJson) {
+        try {
+            if (!SingularHelper.isValidNonEmptyString(userDetailsJson)) return;
+
+            SingularHelper.setUserDetails(
+                    SingularHelper.buildUserDetails(new JSONObject(userDetailsJson)));
+        } catch (Throwable e) {
+            Log.e("SingularSDK", "Error in setUserDetails", e);
+        }
+    }
+
+    @ReactMethod
+    public void clearUserDetails() {
+        SingularHelper.clearUserDetails();
+    }
+
+    @ReactMethod
     public void setLimitAdvertisingIdentifiers(boolean enabled) {
         SingularHelper.setLimitAdvertisingIdentifiers(enabled);
     }
@@ -285,8 +303,8 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             }
 
             Object limitDataSharing = configJson.opt("limitDataSharing");
-            if (limitDataSharing != JSONObject.NULL) {
-                config.withLimitDataSharing((boolean)limitDataSharing);
+            if (limitDataSharing != null && limitDataSharing != JSONObject.NULL) {
+                config.withLimitDataSharing((boolean) limitDataSharing);
             }
 
             boolean collectOAID = configJson.optBoolean("collectOAID", false);
@@ -349,6 +367,14 @@ public class SingularBridgeModule extends ReactContextBaseJavaModule {
             List<String> brandedDomainsList = convertJsonArrayToList(brandedDomains);
             if (brandedDomainsList != null && brandedDomainsList.size() > 0) {
                 config.withBrandedDomains(brandedDomainsList);
+            }
+
+            JSONObject userDetails = configJson.optJSONObject("userDetails");
+            if (userDetails != null) {
+                SingularUserDetails singularUserDetails = SingularHelper.buildUserDetails(userDetails);
+                if (singularUserDetails != null) {
+                    config.withUserDetails(singularUserDetails);
+                }
             }
         } catch (Throwable ignored) {
         }

@@ -27,21 +27,31 @@ static NSString* secret;
 static NSDictionary* launchOptions;
 static RCTEventEmitter* eventEmitter;
 
+static NSUserActivity* pendingUserActivity;
+static SingularConfig* currentConfig;
+
 // Saving the launchOptions for later when the SDK is initialized to handle Singular Links.
 // The client will need to call this method is the AppDelegate in didFinishLaunchingWithOptions.
-+(void)startSessionWithLaunchOptions:(NSDictionary*)options{
++(void)startSessionWithLaunchOptions:(NSDictionary*)options {
     launchOptions = options;
 }
 
-// Handling Singular Link when the app is opened from a Singular Link while it was in the background.
-// The client will need to call this method in the AppDelegate in continueUserActivity.
-+(void)startSessionWithUserActivity:(NSUserActivity*)userActivity{
+// Handling a Singular Link delivered as a universal link, on both cold launch and warm resume.
+// call this method in the AppDelegate in continueUserActivity, or in the
+// SceneDelegate in scene:willConnectToSession:options: (cold) and scene:continueUserActivity: (warm).
++(void)startSessionWithUserActivity:(NSUserActivity*)userActivity {
+    if (!currentConfig) {
+        pendingUserActivity = userActivity;
+        return;
+    }
+
     [Singular startSession:apikey
                    withKey:secret
            andUserActivity:userActivity
    withSingularLinkHandler:^(SingularLinkParams * params){
        [SingularBridge handleSingularLink:params];
-   }];
+   }
+andShortLinkResolveTimeout:currentConfig.shortLinkResolveTimeOut];
 }
 
 RCT_EXPORT_MODULE();
@@ -109,7 +119,7 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig) {
 
     NSNumber* limitDataSharing = [singularConfigDict objectForKey:@"limitDataSharing"];
 
-    if (![limitDataSharing isEqual:[NSNull null]]) {
+    if (limitDataSharing != nil && ![limitDataSharing isEqual:[NSNull null]]) {
         [SingularHelper limitDataSharing:[limitDataSharing boolValue]];
     }
 
@@ -139,7 +149,23 @@ RCT_EXPORT_METHOD(init:(NSString*) jsonSingularConfig) {
 
     singularConfig.limitAdvertisingIdentifiers = [[singularConfigDict objectForKey:@"limitAdvertisingIdentifiers"] boolValue];
 
+    NSNumber* logLevel = [singularConfigDict objectForKey:@"logLevel"];
+    [SingularHelper applyLoggingConfig:singularConfig
+                        enableLogging:[[singularConfigDict objectForKey:@"enableLogging"] boolValue]
+                             logLevel:[logLevel isKindOfClass:[NSNumber class]] ? [logLevel integerValue] : -1];
+
+    NSDictionary* userDetails = [singularConfigDict objectForKey:@"userDetails"];
+    if ([userDetails isKindOfClass:[NSDictionary class]]) {
+        [SingularHelper applyUserDetails:userDetails toConfig:singularConfig];
+    }
+
     eventEmitter = self;
+
+    singularConfig.userActivity = pendingUserActivity;
+    pendingUserActivity = nil;
+    launchOptions = nil;
+
+    currentConfig = singularConfig;
 
     [SingularHelper initWithConfig:singularConfig];
 }
@@ -258,6 +284,17 @@ RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(setGlobalProperty:(NSString *)key value:(
 
 RCT_EXPORT_METHOD(unsetGlobalProperty:(NSString *) key) {
     [SingularHelper unsetGlobalProperty:key];
+}
+
+RCT_EXPORT_METHOD(setUserDetails:(NSString *)userDetailsJson) {
+    NSDictionary* userDetails = [SingularHelper jsonStringToDictionary:userDetailsJson];
+    if ([userDetails isKindOfClass:[NSDictionary class]]) {
+        [SingularHelper setUserDetailsFromDictionary:userDetails];
+    }
+}
+
+RCT_EXPORT_METHOD(clearUserDetails) {
+    [SingularHelper clearUserDetails];
 }
 
 RCT_EXPORT_METHOD(clearGlobalProperties) {

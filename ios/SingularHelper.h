@@ -14,6 +14,10 @@
 
 + (void)initWithConfig:(SingularConfig *)config;
 
++ (void)applyLoggingConfig:(SingularConfig *)config
+             enableLogging:(BOOL)enableLogging
+                  logLevel:(NSInteger)logLevel;
+
 + (void)setSessionTimeout:(int)sessionTimeout;
 + (void)event:(NSString *)eventName;
 + (void)eventWithArgs:(NSString *)eventName args:(NSDictionary *)args;
@@ -40,6 +44,10 @@
 
 + (void)limitDataSharing:(BOOL)shouldLimit;
 + (BOOL)getLimitDataSharing;
+
++ (void)setUserDetailsFromDictionary:(NSDictionary *)values;
++ (void)clearUserDetails;
++ (void)applyUserDetails:(NSDictionary *)values toConfig:(SingularConfig *)config;
 
 + (BOOL)setGlobalProperty:(NSString *)key value:(NSString *)value overrideExisting:(BOOL)override;
 + (void)unsetGlobalProperty:(NSString *)key;

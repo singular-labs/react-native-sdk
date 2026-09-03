@@ -38,6 +38,7 @@ export class SingularConfig {
     withLimitAdvertisingIdentifiers(limitAdvertisingIdentifiers: boolean): SingularConfig;
     withEnableOdmWithTimeoutInterval(enableOdmWithTimeoutInterval: number) : SingularConfig;
     withDDLTimeoutInSec(ddlTimeoutSec: number) : SingularConfig;
+    withUserDetails(userDetails: SingularUserDetails): SingularConfig;
 }
 
 export class SingularPurchase {
@@ -100,6 +101,9 @@ export class Singular {
     static handlePushNotification(pushNotificationPayload: SerializableObject): void;
     static setLimitAdvertisingIdentifiers(enabled: boolean): void;
     static setDeferredDeepLinkTimeout(duration: number): void;
+
+    static setUserDetails(userDetails: SingularUserDetails): void;
+    static clearUserDetails(): void;
 }
 
 export class SingularAdData {
@@ -117,6 +121,26 @@ export class SingularAdData {
     withPrecision(precision: string): SingularAdData;
     withPlacementId(placementIdstring: string): SingularAdData;
     withAdUnitName(adUnitName: string): SingularAdData;
+    withLimitDataSharing(shouldLimitDataSharing: boolean): SingularAdData;
+}
+
+export class SingularUserDetails {
+    constructor();
+
+    email?: string;
+    phoneNumber?: string;
+    emailSTD?: string;
+    emailNoDots?: string;
+    phoneE164?: string;
+    phoneDigits?: string;
+
+    setEmail(email: string): SingularUserDetails;
+    setPhoneNumber(phoneNumber: string): SingularUserDetails;
+
+    setEmailSTD(hashedEmail: string): SingularUserDetails;
+    setEmailNoDots(hashedEmail: string): SingularUserDetails;
+    setPhoneE164(hashedPhone: string): SingularUserDetails;
+    setPhoneDigits(hashedPhone: string): SingularUserDetails;
 }
 
 import { Events } from './Events'
@@ -184,7 +208,8 @@ declare const Attributes: {
     sngAttrSuccess:string,
     sngAttrTransactionId:string,
     sngAttrTutorialId:string,
-    sngAttrValid:string
+    sngAttrValid:string,
+    sngAttrLimitDataSharing:string
 }
 
 export { Events };

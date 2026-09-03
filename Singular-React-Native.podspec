@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
     spec.source_files = "ios/SingularBridge.h", "ios/SingularBridgeOldArch.m", "ios/SingularHelper.h", "ios/SingularHelper.m"
   end
   spec.platform         = :ios, "12.0"
-  spec.dependency 'Singular-SDK', '12.10.1'
+  spec.dependency 'Singular-SDK', '12.14.1'
   spec.static_framework = true
 
   # RN 0.71+ dependency setup.this handles both architectures, fallback for older versions
