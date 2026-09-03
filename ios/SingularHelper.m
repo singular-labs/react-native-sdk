@@ -14,6 +14,32 @@
     [Singular setSessionTimeout:sessionTimeout];
 }
 
+
+// The JS withLogLevel() API takes android.util.Log style levels
+// Verbose=2, Debug=3, Info=4, Warn=5, Error=6, Assert=7
+
+// iOS native SDK log levels (SingularLogLevel)
+// None=0, Error=1, Warning=2, Info=3, Debug=4, Verbose=5
+
++ (SingularLogLevel)mapReactNativeLogLevelToiOS:(NSInteger)reactNativeLogLevel {
+    switch (reactNativeLogLevel) {
+        case 2: return SingularLogLevelVerbose;
+        case 3: return SingularLogLevelDebug;
+        case 4: return SingularLogLevelInfo;
+        case 5: return SingularLogLevelWarning;
+        case 6: return SingularLogLevelError;
+        case 7: return SingularLogLevelNone;
+        default: return SingularLogLevelError;
+    }
+}
+
++ (void)applyLoggingConfig:(SingularConfig *)config
+             enableLogging:(BOOL)enableLogging
+                  logLevel:(NSInteger)logLevel {
+    config.enableLogging = enableLogging;
+    config.logLevel = [self mapReactNativeLogLevelToiOS:logLevel];
+}
+
 #pragma mark - Event Tracking
 
 + (void)event:(NSString *)eventName {
@@ -130,6 +156,68 @@
 }
 
 #pragma mark - Global Properties
+
+#pragma mark - User Details
+
++ (BOOL)isNonEmptyString:(id)value {
+    if (![value isKindOfClass:[NSString class]] || [(NSString *)value length] == 0) {
+        return NO;
+    }
+
+    NSString *lowercased = [(NSString *)value lowercaseString];
+    return ![lowercased isEqualToString:@"null"] && ![lowercased isEqualToString:@"undefined"];
+}
+
++ (SingularUserDetails *)userDetailsFromDictionary:(NSDictionary *)values {
+    if (![values isKindOfClass:[NSDictionary class]]) {
+        return nil;
+    }
+
+    SingularUserDetails *userDetails = [[SingularUserDetails alloc] init];
+
+    if ([self isNonEmptyString:values[@"email"]]) {
+        [userDetails setEmail:values[@"email"]];
+    }
+    if ([self isNonEmptyString:values[@"phoneNumber"]]) {
+        [userDetails setPhoneNumber:values[@"phoneNumber"]];
+    }
+    if ([self isNonEmptyString:values[@"emailSTD"]]) {
+        [userDetails setEmailSTD:values[@"emailSTD"]];
+    }
+    if ([self isNonEmptyString:values[@"emailNoDots"]]) {
+        [userDetails setEmailNoDots:values[@"emailNoDots"]];
+    }
+    if ([self isNonEmptyString:values[@"phoneE164"]]) {
+        [userDetails setPhoneE164:values[@"phoneE164"]];
+    }
+    if ([self isNonEmptyString:values[@"phoneDigits"]]) {
+        [userDetails setPhoneDigits:values[@"phoneDigits"]];
+    }
+
+    return userDetails;
+}
+
++ (void)setUserDetailsFromDictionary:(NSDictionary *)values {
+    SingularUserDetails *userDetails = [self userDetailsFromDictionary:values];
+    if (userDetails) {
+        [Singular setUserDetails:userDetails];
+    }
+}
+
++ (void)clearUserDetails {
+    [Singular clearUserDetails];
+}
+
++ (void)applyUserDetails:(NSDictionary *)values toConfig:(SingularConfig *)config {
+    if (!config) {
+        return;
+    }
+
+    SingularUserDetails *userDetails = [self userDetailsFromDictionary:values];
+    if (userDetails) {
+        config.userDetails = userDetails;
+    }
+}
 
 + (BOOL)setGlobalProperty:(NSString *)key value:(NSString *)value overrideExisting:(BOOL)override {
     return [Singular setGlobalProperty:key andValue:value overrideExisting:override];

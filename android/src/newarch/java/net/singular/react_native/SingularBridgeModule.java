@@ -26,11 +26,12 @@ import com.singular.sdk.SingularLinkHandler;
 import com.singular.sdk.SingularLinkParams;
 import com.singular.sdk.SDIDAccessorHandler;
 import com.singular.sdk.ShortLinkHandler;
+import com.singular.sdk.SingularUserDetails;
 
 
 public class SingularBridgeModule extends NativeSingularSpec {
     public static final String NAME = "SingularBridge";
-    private static final String version = "4.2.0";
+    private static final String version = "4.3.0";
     private static final String wrapper = "ReactNative";
 
     private static SingularConfig config;
@@ -64,6 +65,7 @@ public class SingularBridgeModule extends NativeSingularSpec {
         String CONFIG_KEY_CUSTOM_SDID = "customSdid";
         String CONFIG_KEY_BRANDED_DOMAINS = "brandedDomains";
         String CONFIG_KEY_PUSH_NOTIFICATIONS_LINK_PATHS = "pushNotificationsLinkPaths";
+        String CONFIG_KEY_USER_DETAILS = "userDetails";
         
         // Global properties key constants
         String GLOBAL_PROP_KEY = "Key";
@@ -92,6 +94,7 @@ public class SingularBridgeModule extends NativeSingularSpec {
             String AD_GROUP_PRIORITY = "ad_group_priority";
             String AD_PRECISION = "ad_precision";
             String AD_PLACEMENT_ID = "ad_placement_id";
+            String SNG_ATTR_LIMIT_DATA_SHARING = "sng_attr_limit_data_sharing";
         }
     }
 
@@ -262,6 +265,23 @@ public class SingularBridgeModule extends NativeSingularSpec {
     }
 
     @Override
+    public void setUserDetails(ReadableMap userDetails) {
+        if (userDetails == null) return;
+
+        try {
+            SingularHelper.setUserDetails(
+                    SingularHelper.buildUserDetails(convertReadableMapToJSONObject(userDetails)));
+        } catch (Exception e) {
+            Log.e("SingularSDK", "Error in setUserDetails", e);
+        }
+    }
+
+    @Override
+    public void clearUserDetails() {
+        SingularHelper.clearUserDetails();
+    }
+
+    @Override
     public boolean setGlobalProperty(String key, String value, boolean overrideExisting) {
         return SingularHelper.setGlobalProperty(key, value, overrideExisting);
     }
@@ -364,6 +384,9 @@ public class SingularBridgeModule extends NativeSingularSpec {
             }
             if (adData.hasKey(Constants.AdRevenue.AD_PLACEMENT_ID) && !adData.isNull(Constants.AdRevenue.AD_PLACEMENT_ID)) {
                 adRevenueData.put(Constants.AdRevenue.AD_PLACEMENT_ID, adData.getString(Constants.AdRevenue.AD_PLACEMENT_ID));
+            }
+            if (adData.hasKey(Constants.AdRevenue.SNG_ATTR_LIMIT_DATA_SHARING) && !adData.isNull(Constants.AdRevenue.SNG_ATTR_LIMIT_DATA_SHARING)) {
+                adRevenueData.put(Constants.AdRevenue.SNG_ATTR_LIMIT_DATA_SHARING, adData.getBoolean(Constants.AdRevenue.SNG_ATTR_LIMIT_DATA_SHARING));
             }
 
             JSONObject jsonObject = new JSONObject(adRevenueData);
@@ -557,6 +580,21 @@ public class SingularBridgeModule extends NativeSingularSpec {
             String[][] pushSelectors = convertReadableArrayTo2DArray(pushNotificationLinkPathsArray);
             if (pushSelectors != null) {
                 pushNotificationsLinkPaths = pushSelectors;
+            }
+        }
+
+        if (configMap.hasKey(Constants.CONFIG_KEY_USER_DETAILS) && !configMap.isNull(Constants.CONFIG_KEY_USER_DETAILS)) {
+            try {
+                ReadableMap userDetailsMap = configMap.getMap(Constants.CONFIG_KEY_USER_DETAILS);
+                if (userDetailsMap != null) {
+                    SingularUserDetails userDetails =
+                            SingularHelper.buildUserDetails(convertReadableMapToJSONObject(userDetailsMap));
+                    if (userDetails != null) {
+                        config.withUserDetails(userDetails);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("SingularSDK", "Error parsing userDetails from config", e);
             }
         }
     }

@@ -344,6 +344,24 @@ export class Singular {
         return SingularBridge.getGlobalProperties();
     }
 
+    static setUserDetails(userDetails) {
+        if (!userDetails) {
+            __DEV__ && console.log('[Singular SDK] setUserDetails: userDetails must be a non-null object');
+            return;
+        }
+
+        if (isNewArch) {
+            SingularBridge.setUserDetails(userDetails);
+            return;
+        }
+
+        SingularBridge.setUserDetails(JSON.stringify(userDetails));
+    }
+
+    static clearUserDetails() {
+        SingularBridge.clearUserDetails();
+    }
+
     static handlePushNotification(pushNotificationPayload) {
         if (Platform.OS === 'ios') {
            SingularBridge.handlePushNotification(pushNotificationPayload);

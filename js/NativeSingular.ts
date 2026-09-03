@@ -32,6 +32,16 @@ export interface SingularAdData {
   ad_group_priority?: number;
   ad_precision?: string;
   ad_placement_id?: string;
+  sng_attr_limit_data_sharing?: boolean;
+}
+
+export interface SingularUserDetails {
+  email?: string;
+  phoneNumber?: string;
+  emailSTD?: string;
+  emailNoDots?: string;
+  phoneE164?: string;
+  phoneDigits?: string;
 }
 
 export interface SingularConfig {
@@ -57,6 +67,7 @@ export interface SingularConfig {
   enableOdmWithTimeoutInterval?: number;
   ddlTimeoutSec?: number; //android only
   logLevel?: number;
+  userDetails?: SingularUserDetails;
 }
 
 export interface Spec extends TurboModule {
@@ -96,6 +107,9 @@ export interface Spec extends TurboModule {
     unsetGlobalProperty(key: string): void;
     clearGlobalProperties(): void;
     getGlobalProperties(): Object;
+
+    setUserDetails(userDetails: SingularUserDetails): void;
+    clearUserDetails(): void;
 
     createReferrerShortLink(baseLink: string, referrerName: string, referrerId: string, passthroughParams: Object, completionHandler: (result: string, error: string) => void): void;
 

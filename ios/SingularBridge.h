@@ -22,7 +22,7 @@
 @interface SingularBridge : RCTEventEmitter <RCTBridgeModule>
 #endif
 
-+ (void)startSessionWithUserActivity:(NSUserActivity*)userActivity;
 + (void)startSessionWithLaunchOptions:(NSDictionary*)options;
++ (void)startSessionWithUserActivity:(NSUserActivity*)userActivity;
 
 @end
