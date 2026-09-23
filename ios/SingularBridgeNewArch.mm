@@ -45,7 +45,7 @@ static NSDictionary *launchOptions;
 static NSUserActivity *pendingUserActivity;
 static SingularConfig *currentConfig;
 
-static NSString* const version = @"4.3.0";
+static NSString* const version = @"4.3.1";
 static NSString* const wrapper = @"ReactNative";
 
 // Ad Revenue key constants
